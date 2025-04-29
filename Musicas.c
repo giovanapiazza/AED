@@ -1,174 +1,241 @@
-//Implemente uma TAD de Lista Simplesmente  Encadeada (LSE), de structs nodo_LSE, as quais possuem a struct musica como informação, onde contenha as seguintes operações (interfaces): – CriaLista – Insere – Remove – Consulta – Imprime 
-// Crie um programa principal que seja capaz de utilizar a TAD em questão.
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-    struct musica{ 
-        char titulo[256]; 
-        char artista[256]; 
-        char letra[256]; 
-        int codigo; 
-        int execucoes; 
-        } 
+// Structs principais
+struct musica {
+    char titulo[256];
+    char artista[256];
+    char letra[256];
+    int codigo;
+    int execucoes;
+};
 
-    struct nodo_LSE{ 
-        struct nodo_LSE *prox; 
-        struct musica *info; 
-        } 
-    struct desc_LSE{ 
-        struct nodo_LSE *LSE; 
-        int tamanho; 
-        } 
+struct nodo_LSE {
+    struct musica *info;
+    struct nodo_LSE *prox;
+};
 
-    struct nodo* criaNodo(int novoDado){//nodos
-        struct nodo *novoElem = (struct nodo *)malloc(sizeof(struct nodo));
-        novoElem->dado = novoDado;
-        novoElem->prox =  NULL;
-        return novoElem;
+struct desc_LSE {
+    struct nodo_LSE *LSE;
+    int tamanho;
+};
+
+// Funções da TAD
+struct nodo_LSE* criaNodo(struct musica *novaMusica) {
+    struct nodo_LSE *novo = malloc(sizeof(struct nodo_LSE));
+    novo->info = novaMusica;
+    novo->prox = NULL;
+    return novo;
+}
+
+struct desc_LSE* criaDescritor(void) {
+    struct desc_LSE *novoDesc = malloc(sizeof(struct desc_LSE));
+    novoDesc->LSE = NULL;
+    novoDesc->tamanho = 0;
+    return novoDesc;
+}
+
+void insere(struct desc_LSE *lista, struct nodo_LSE *novo_elemento, int posicao) {
+    if (lista->LSE == NULL || posicao <= 0) {
+        novo_elemento->prox = lista->LSE;
+        lista->LSE = novo_elemento;
+    } else {
+        struct nodo_LSE *aux = lista->LSE;
+        int contador = 0;
+        struct nodo_LSE *anterior = NULL;
+
+        while (aux != NULL && contador < posicao) {
+            anterior = aux;
+            aux = aux->prox;
+            contador++;
         }
 
-    struct desc_lista_encadeada * criaDescritor(void){
-        struct desc_lista_encadeada *novoDescLista = (struct desc_lista_encadeada *)malloc(sizeof(struct desc_lista_encadeada));
-        novoDescLista->tamanho = 0;
-        novoDescLista->lista=NULL;
-        return novoDescLista;
-        }
-
-            //Para inserir uma nova música
-    void insere(struct desc_lista_encadeada *minhaLista, struct nodo *novo_elemento, int posicao, int chaveNova){
-
-        printf("Em qual posição você deseja inserir a musica:\n");
-        setbuf(stdin,NULL);
-        scanf("%d", &posicao);
-        printf("digite o valor do novo nodo\n");
-		setbuf(stdin,NULL);
-		scanf("%d",&chaveNova);
-		novoNodo = criaNodo(chaveNova);
-					
-					insere(minhaNovaLista,novoNodo,posicao);
-					break;
-
-        if((minhaLista->lista == NULL)||(posicao ==0)){//começo
-            novo_elemento->prox = minhaLista->lista;
-            minhaLista->lista = novo_elemento;
-            minhaLista->tamanho++;
-        }
-        else{ // não sendo no começo
-            struct nodo *aux = minhaLista->lista;
-            int listaPos = 0;
-            if(minhaLista->tamanho < posicao){// se não tem a posição vai pro final da lista
-                while(aux->prox != NULL){
-                    aux = aux->prox; 
-                }
-                aux->prox = novo_elemento;
-                minhaLista->tamanho++;
-                return;
-            }else{//se tem vai pro lugar
-                struct nodo *anterior;
-                while(aux != NULL){
-                    anterior = aux;
-                    aux = aux->prox; 
-                    listaPos++;
-                    if(listaPos == posicao){
-                        novo_elemento->prox	= aux;
-                        anterior->prox		= novo_elemento;
-                        minhaLista->tamanho++;
-                        return;
-                    }
-                }
-            }
-        }
-    }
-    
-    struct nodo* removeLista(struct desc_lista_encadeada *minhaLista, int posicao){
-        if((minhaLista->tamanho ==0)||(posicao > minhaLista->tamanho)){ //posicao nao existe na lista não remove nada
-            printf("posicao não existe OU LISTA VAZIA!\n");
-            return NULL;
-        }
-        else{
-            if(posicao==0){ //delecao no inicio da lista atualiza apenas o ponteiro da lista do descritor de lista
-                struct nodo *aux = minhaLista->lista;
-                minhaLista->lista = minhaLista->lista->prox;
-                minhaLista->tamanho--;
-                return aux; 
-            }
-            else{ //delecao no meio ou no fim da lista
-                int listaPos=0;
-                struct nodo *anterior;
-                struct nodo *aux = minhaLista->lista;
-                while(aux != NULL){
-                    anterior = aux;
-                    aux = aux->prox;
-                    listaPos++;
-                    if(listaPos == posicao){
-                        anterior->prox = aux->prox;
-                        minhaLista->tamanho--;
-                        return aux;
-                    }
-                }	
-            }
-        }
+        novo_elemento->prox = aux;
+        if (anterior != NULL)
+            anterior->prox = novo_elemento;
     }
 
-        //Para imprimir todas as músicas
-void imprime(struct desc_lista_encadeada *minhaLista){
-    struct nodo* aux = minhaLista->lista;
-    while(aux != NULL){
-        printf("[%d] ", aux->dado);
+    lista->tamanho++;
+}
+
+struct nodo_LSE* removeLista(struct desc_LSE *lista, int posicao) {
+    if (lista->tamanho == 0 || posicao < 0 || posicao >= lista->tamanho) {
+        printf("Posição inválida ou lista vazia!\n");
+        return NULL;
+    }
+
+    struct nodo_LSE *removido;
+    if (posicao == 0) {
+        removido = lista->LSE;
+        lista->LSE = lista->LSE->prox;
+    } else {
+        struct nodo_LSE *aux = lista->LSE;
+        for (int i = 0; i < posicao - 1; i++) {
             aux = aux->prox;
         }
-        printf("\n");
+        removido = aux->prox;
+        aux->prox = removido->prox;
     }
-    
 
-int main(void){
+    lista->tamanho--;
+    printf("Música removida com sucesso!\n");
+    return removido;
+}
+
+void procurar(struct desc_LSE *lista, char nome[256]) {
+    struct nodo_LSE *aux = lista->LSE;
+    while (aux != NULL) {
+        if (strcmp(aux->info->titulo, nome) == 0) {
+            printf("Música encontrada!\n");
+            printf("Título: %s\n", aux->info->titulo);
+            printf("Artista: %s\n", aux->info->artista);
+            printf("Letra: %s\n", aux->info->letra);
+            printf("Código: %d\n", aux->info->codigo);
+            printf("Execuções: %d\n", aux->info->execucoes);
+            return;
+        }
+        aux = aux->prox;
+    }
+    printf("Música não encontrada.\n");
+}
+
+void imprime(struct desc_LSE *lista) {
+    struct nodo_LSE *aux = lista->LSE;
+    int i = 1;
+    while (aux != NULL) {
+        printf("\nMúsica %d:\n", i++);
+        printf("Título: %s\n", aux->info->titulo);
+        printf("Artista: %s\n", aux->info->artista);
+        printf("Execuções: %d\n", aux->info->execucoes);
+        aux = aux->prox;
+    }
+}
+
+void criaListaComDados(struct desc_LSE *lista) {
+    int qtd;
+
+    printf("Quantas músicas deseja adicionar? ");
+    scanf("%d", &qtd);
+    setbuf(stdin, NULL);
+
+    for (int i = 0; i < qtd; i++) {
+        struct musica *m = malloc(sizeof(struct musica));
+
+        printf("\nMúsica %d:\n", i + 1);
+        printf("Título: ");
+        fgets(m->titulo, sizeof(m->titulo), stdin);
+        m->titulo[strcspn(m->titulo, "\n")] = '\0';
+
+        printf("Artista: ");
+        fgets(m->artista, sizeof(m->artista), stdin);
+        m->artista[strcspn(m->artista, "\n")] = '\0';
+
+        printf("Letra: ");
+        fgets(m->letra, sizeof(m->letra), stdin);
+        m->letra[strcspn(m->letra, "\n")] = '\0';
+
+        printf("Código: ");
+        scanf("%d", &m->codigo);
+        setbuf(stdin, NULL);
+
+        printf("Número de execuções: ");
+        scanf("%d", &m->execucoes);
+        setbuf(stdin, NULL);
+
+        struct nodo_LSE *nodo = criaNodo(m);
+        insere(lista, nodo, lista->tamanho); // insere no final
+    }
+
+    printf("\nLista criada com %d músicas!\n", lista->tamanho);
+}
+
+int main(void) {
+    struct desc_LSE *lista = criaDescritor();
     int op;
 
     do {
-    printf("Escolha uma opção\n");
-    printf("1 Criar lista de músicas");
-    printf("2 Inserir uma nova música a sua lista\n");
-    printf("3 Remover uma música da lista\n");
-    printf("4 Procurar por uma música\n");
-    printf("5 Imprimir lista de músicas\n");
-    printf("0 Encerrar");
-    scanf("%d", &op);
+        printf("\n--- MENU ---\n");
+        printf("1 - Criar lista de músicas\n");
+        printf("2 - Inserir uma nova música\n");
+        printf("3 - Remover uma música da lista\n");
+        printf("4 - Procurar por uma música\n");
+        printf("5 - Imprimir lista de músicas\n");
+        printf("0 - Encerrar\n");
+        printf("Opção: ");
+        scanf("%d", &op);
+        setbuf(stdin, NULL);
 
-    switch(op){
-        case 0: 
-        printf("Encerrando...");
-        break;
+        switch(op) {
+            case 0:
+                printf("Encerrando...\n");
+                break;
 
-        case 1:
-        printf("Criando nova lista de músicas");
-        break;
+            case 1:
+                criaListaComDados(lista);
+                break;
 
-        case 2:
-            printf("Vamos inserir uma música nova");
-            insere(desc_lista_encadeada *minhaLista, nodo *novo_elemento, posicao, chaveNova)
-            printf("Música inserida com sucesso");
-        break;
+            case 2: {
+                struct musica *m = malloc(sizeof(struct musica));
+                int pos;
 
-        case 3
-            printf("Música removida com sucesso");
-        break;
+                printf("Título: ");
+                fgets(m->titulo, sizeof(m->titulo), stdin);
+                m->titulo[strcspn(m->titulo, "\n")] = '\0';
 
-        case 4
-        printf("Vamos procurar por uma música\n");
+                printf("Artista: ");
+                fgets(m->artista, sizeof(m->artista), stdin);
+                m->artista[strcspn(m->artista, "\n")] = '\0';
 
-        break;
+                printf("Letra: ");
+                fgets(m->letra, sizeof(m->letra), stdin);
+                m->letra[strcspn(m->letra, "\n")] = '\0';
 
-        case 5
-            printf("Aqui está sua lista de música");
-            imprime(desc_lista_encadeada *minhaLista)
-        break;
+                printf("Código: ");
+                scanf("%d", &m->codigo);
+                setbuf(stdin, NULL);
 
-        default: 
-        printf(" Opção invalida tente novamente...\n");
-        break;
-        
+                printf("Número de execuções: ");
+                scanf("%d", &m->execucoes);
+                setbuf(stdin, NULL);
 
-    }
-    }while(op != 0);
+                printf("Posição para inserir (0 a %d): ", lista->tamanho);
+                scanf("%d", &pos);
+                setbuf(stdin, NULL);
+
+                struct nodo_LSE *novo = criaNodo(m);
+                insere(lista, novo, pos);
+                break;
+            }
+
+            case 3: {
+                int pos;
+                printf("Posição da música a remover: ");
+                scanf("%d", &pos);
+                setbuf(stdin, NULL);
+                struct nodo_LSE *rem = removeLista(lista, pos);
+                if (rem) free(rem->info);
+                free(rem);
+                break;
+            }
+
+            case 4: {
+                char nome[256];
+                printf("Digite o nome da música: ");
+                fgets(nome, sizeof(nome), stdin);
+                nome[strcspn(nome, "\n")] = '\0';
+                procurar(lista, nome);
+                break;
+            }
+
+            case 5:
+                imprime(lista);
+                break;
+
+            default:
+                printf("Opção inválida!\n");
+        }
+    } while (op != 0);
+
     return 0;
 }
