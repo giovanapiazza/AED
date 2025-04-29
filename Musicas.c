@@ -21,7 +21,7 @@ struct desc_LSE {
     int tamanho;
 };
 
-// Funções da TAD
+
 struct nodo_LSE* criaNodo(struct musica *novaMusica) {
     struct nodo_LSE *novo = malloc(sizeof(struct nodo_LSE));
     novo->info = novaMusica;
@@ -150,6 +150,7 @@ void criaListaComDados(struct desc_LSE *lista) {
     printf("\nLista criada com %d músicas!\n", lista->tamanho);
 }
 
+// musicasmain.c
 int main(void) {
     struct desc_LSE *lista = criaDescritor();
     int op;
