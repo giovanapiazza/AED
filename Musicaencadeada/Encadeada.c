@@ -40,29 +40,28 @@ struct desc_LDE* criaDescritor(void) {
 }
 
 void insere(struct desc_LDE *lista, struct nodo_LDE *novo_elemento, int posicao) {
-    if (lista->LDE == NULL || posicao <= 0) {
-        novo_elemento->prox = aux;
-        novo_elemento->ante = anterior;
-        if (aux != NULL)
-            aux->ante = novo_elemento;
-        if (anterior != NULL)
-            anterior->prox = novo_elemento;
-        else
-            lista->LDE = novo_elemento;
-    } else {
-        struct nodo_LDE *aux = lista->LDE;
-        int contador = 0;
-        struct nodo_LDE *anterior = NULL;
+    struct nodo_LDE *aux = lista->LDE;
+    struct nodo_LDE *anterior = NULL;
+    int contador = 0;
 
+    if (lista->LDE == NULL || posicao <= 0) {
+        novo_elemento->prox = lista->LDE;
+        novo_elemento->ante = NULL;
+        if (lista->LDE != NULL)
+            lista->LDE->ante = novo_elemento;
+        lista->LDE = novo_elemento;
+    } else {
         while (aux != NULL && contador < posicao) {
             anterior = aux;
             aux = aux->prox;
             contador++;
         }
-
         novo_elemento->prox = aux;
+        novo_elemento->ante = anterior;
         if (anterior != NULL)
             anterior->prox = novo_elemento;
+        if (aux != NULL)
+            aux->ante = novo_elemento;
     }
 
     lista->tamanho++;
@@ -74,18 +73,19 @@ struct nodo_LDE* removeLista(struct desc_LDE *lista, int posicao) {
         return NULL;
     }
 
-    struct nodo_LDE *removido;
-    if (posicao == 0) {
-        removido = lista->LDE;
-        lista->LDE = lista->LDE->prox;
-    } else {
-        struct nodo_LDE *aux = lista->LDE;
-        for (int i = 0; i < posicao - 1; i++) {
-            aux = aux->prox;
-        }
-        removido = aux->prox;
-        aux->prox = removido->prox;
+    struct nodo_LDE *removido = lista->LDE;
+
+    for (int i = 0; i < posicao; i++) {
+        removido = removido->prox;
     }
+
+    if (removido->ante != NULL)
+        removido->ante->prox = removido->prox;
+    else
+        lista->LDE = removido->prox;
+
+    if (removido->prox != NULL)
+        removido->prox->ante = removido->ante;
 
     lista->tamanho--;
     printf("Música removida com sucesso!\n");
