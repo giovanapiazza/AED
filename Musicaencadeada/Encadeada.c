@@ -28,7 +28,7 @@ struct nodo_LDE* criaNodo(struct musica *novaMusica) {
     struct nodo_LDE *novo = malloc(sizeof(struct nodo_LDE));
     novo->info = novaMusica;
     novo->prox = NULL;
-    novo->ante = info;
+    novo->ante = NULL;
     return novo;
 }
 
@@ -41,8 +41,14 @@ struct desc_LDE* criaDescritor(void) {
 
 void insere(struct desc_LDE *lista, struct nodo_LDE *novo_elemento, int posicao) {
     if (lista->LDE == NULL || posicao <= 0) {
-        novo_elemento->prox = lista->LDE;
-        lista->LDE = novo_elemento;
+        novo_elemento->prox = aux;
+        novo_elemento->ante = anterior;
+        if (aux != NULL)
+            aux->ante = novo_elemento;
+        if (anterior != NULL)
+            anterior->prox = novo_elemento;
+        else
+            lista->LDE = novo_elemento;
     } else {
         struct nodo_LDE *aux = lista->LDE;
         int contador = 0;
@@ -86,7 +92,7 @@ struct nodo_LDE* removeLista(struct desc_LDE *lista, int posicao) {
     return removido;
 }
 
-void procurar(struct desc_LSE *lista, char nome[256]) {
+void procurar(struct desc_LDE *lista, char nome[256]) {
     struct nodo_LDE *aux = lista->LDE;
     while (aux != NULL) {
         if (strcmp(aux->info->titulo, nome) == 0) {
