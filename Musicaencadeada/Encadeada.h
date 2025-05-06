@@ -8,5 +8,6 @@ struct nodo_LDE* removeLista(struct desc_LDE *lista, int posicao);
 void imprime(struct desc_LDE *lista);
 void procurar(struct desc_LDE *lista, char nome[256]);
 void insere(struct desc_LDE *lista, struct nodo_LDE *novo_elemento, int posicao);
+void liberaLista(struct desc_LE *lista);
 
 #endif
