@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// colocar o anterior na struct, e no descritor um ponteiro q chama o final, e no auxiliar que aponta pro outro
 
 struct musica {
     char titulo[256];
