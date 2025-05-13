@@ -1,68 +1,49 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-
-struct musica {
-    char titulo[256];
-    char artista[256];
-    char letra[256];
-    int codigo;
-    int execucoes;
-};
-
-struct nodo_LDE {
-    struct musica *info;
-    struct nodo_LDE *prox;
-    struct nodo_LDE *ante;
-};
-
-struct desc_LDE {
-    struct nodo_LDE *LDE;
-    int tamanho;
-};
-
+#include "Musicatad.h"
 
 struct nodo_LDE* criaNodo(struct musica *novaMusica) {
     struct nodo_LDE *novo = malloc(sizeof(struct nodo_LDE));
     novo->info = novaMusica;
     novo->prox = NULL;
-    novo->ante = NULL;
+    novo->ant = NULL;
     return novo;
 }
 
 struct desc_LDE* criaDescritor(void) {
-    struct desc_LDE *novoDesc = malloc(sizeof(struct desc_LDE));
-    novoDesc->LDE = NULL;
-    novoDesc->tamanho = 0;
-    return novoDesc;
+    struct desc_LDE *desc = malloc(sizeof(struct desc_LDE));
+    desc->inicio = NULL;
+    desc->fim = NULL;
+    desc->tamanho = 0;
+    return desc;
 }
 
-void insere(struct desc_LDE *lista, struct nodo_LDE *novo_elemento, int posicao) {
-    struct nodo_LDE *aux = lista->LDE;
-    struct nodo_LDE *anterior = NULL;
-    int contador = 0;
-
-    if (lista->LDE == NULL || posicao <= 0) {
-        novo_elemento->prox = lista->LDE;
-        novo_elemento->ante = NULL;
-        if (lista->LDE != NULL)
-            lista->LDE->ante = novo_elemento;
-        lista->LDE = novo_elemento;
+void insere(struct desc_LDE *lista, struct nodo_LDE *novo, int posicao) {
+    if (lista->inicio == NULL || posicao <= 0) {
+        novo->prox = lista->inicio;
+        if (lista->inicio)
+            lista->inicio->ant = novo;
+        else
+            lista->fim = novo;
+        lista->inicio = novo;
+    } else if (posicao >= lista->tamanho) {
+        novo->ant = lista->fim;
+        if (lista->fim)
+            lista->fim->prox = novo;
+        else
+            lista->inicio = novo;
+        lista->fim = novo;
     } else {
-        while (aux != NULL && contador < posicao) {
-            anterior = aux;
+        struct nodo_LDE *aux = lista->inicio;
+        for (int i = 0; i < posicao; i++)
             aux = aux->prox;
-            contador++;
-        }
-        novo_elemento->prox = aux;
-        novo_elemento->ante = anterior;
-        if (anterior != NULL)
-            anterior->prox = novo_elemento;
-        if (aux != NULL)
-            aux->ante = novo_elemento;
+        novo->prox = aux;
+        novo->ant = aux->ant;
+        if (aux->ant)
+            aux->ant->prox = novo;
+        aux->ant = novo;
     }
-
     lista->tamanho++;
 }
 
@@ -72,19 +53,19 @@ struct nodo_LDE* removeLista(struct desc_LDE *lista, int posicao) {
         return NULL;
     }
 
-    struct nodo_LDE *removido = lista->LDE;
-
-    for (int i = 0; i < posicao; i++) {
+    struct nodo_LDE *removido = lista->inicio;
+    for (int i = 0; i < posicao; i++)
         removido = removido->prox;
-    }
 
-    if (removido->ante != NULL)
-        removido->ante->prox = removido->prox;
+    if (removido->ant)
+        removido->ant->prox = removido->prox;
     else
-        lista->LDE = removido->prox;
+        lista->inicio = removido->prox;
 
-    if (removido->prox != NULL)
-        removido->prox->ante = removido->ante;
+    if (removido->prox)
+        removido->prox->ant = removido->ant;
+    else
+        lista->fim = removido->ant;
 
     lista->tamanho--;
     printf("Música removida com sucesso!\n");
@@ -92,9 +73,9 @@ struct nodo_LDE* removeLista(struct desc_LDE *lista, int posicao) {
 }
 
 void procurar(struct desc_LDE *lista, char nome[256]) {
-    struct nodo_LDE *aux = lista->LDE;
+    struct nodo_LDE *aux = lista->inicio;
     while (aux != NULL) {
-        if (strcmp(aux->info->titulo, nome) == 0) {
+        if (strcasecmp(aux->info->titulo, nome) == 0) {
             printf("Música encontrada!\n");
             printf("Título: %s\n", aux->info->titulo);
             printf("Artista: %s\n", aux->info->artista);
@@ -109,7 +90,7 @@ void procurar(struct desc_LDE *lista, char nome[256]) {
 }
 
 void imprime(struct desc_LDE *lista) {
-    struct nodo_LDE *aux = lista->LDE;
+    struct nodo_LDE *aux = lista->inicio;
     int i = 1;
     while (aux != NULL) {
         printf("\nMúsica %d:\n", i++);
@@ -122,15 +103,14 @@ void imprime(struct desc_LDE *lista) {
 
 void criaListaComDados(struct desc_LDE *lista) {
     int qtd;
-
     printf("Quantas músicas deseja adicionar? ");
     scanf("%d", &qtd);
     setbuf(stdin, NULL);
 
     for (int i = 0; i < qtd; i++) {
         struct musica *m = malloc(sizeof(struct musica));
-
         printf("\nMúsica %d:\n", i + 1);
+
         printf("Título: ");
         fgets(m->titulo, sizeof(m->titulo), stdin);
         m->titulo[strcspn(m->titulo, "\n")] = '\0';
@@ -152,19 +132,8 @@ void criaListaComDados(struct desc_LDE *lista) {
         setbuf(stdin, NULL);
 
         struct nodo_LDE *nodo = criaNodo(m);
-        insere(lista, nodo, lista->tamanho); // insere no final
+        insere(lista, nodo, lista->tamanho);
     }
 
     printf("\nLista criada com %d músicas!\n", lista->tamanho);
-}
-
-void liberaLista(struct desc_LE *lista) {
-    struct nodo_LDE *aux = lista->LDE;
-    while (aux != NULL) {
-        struct nodo_LDE *temp = aux;
-        aux = aux->prox;
-        free(temp->info);
-        free(temp);
-    }
-    free(lista);
 }
