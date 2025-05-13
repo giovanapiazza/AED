@@ -2,8 +2,18 @@
 #include <stdlib.h>
 #include <string.h>
 #include "Musicatad.h"
-// gcc -o encadeadamain Encadeadamain.c Encadeada.c
-// ./encadeadamain
+
+void liberaLista(struct desc_LDE *lista) {
+    struct nodo_LDE *aux = lista->inicio;
+    while (aux != NULL) {
+        struct nodo_LDE *temp = aux;
+        aux = aux->prox;
+        free(temp->info);
+        free(temp);
+    }
+    free(lista);
+}
+
 int main(void) {
     struct desc_LDE *lista = criaDescritor();
     if (!lista) {
@@ -35,13 +45,9 @@ int main(void) {
 
             case 2: {
                 struct musica *m = malloc(sizeof(struct musica));
-                if (!m) {
-                    fprintf(stderr, "Erro ao alocar memória para música!\n");
-                    break;
-                }
+                if (!m) break;
 
                 int pos;
-
                 printf("Título: ");
                 fgets(m->titulo, sizeof(m->titulo), stdin);
                 m->titulo[strcspn(m->titulo, "\n")] = '\0';
@@ -67,12 +73,6 @@ int main(void) {
                 setbuf(stdin, NULL);
 
                 struct nodo_LDE *novo = criaNodo(m);
-                if (!novo) {
-                    fprintf(stderr, "Erro ao criar nodo!\n");
-                    free(m);
-                    break;
-                }
-
                 insere(lista, novo, pos);
                 break;
             }
