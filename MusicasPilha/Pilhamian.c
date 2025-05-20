@@ -1,3 +1,7 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 int main() {
     int op;
     struct desc_pilha *pilha = NULL;
