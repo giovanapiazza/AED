@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "Pilha.h"
+
 
 // Função para criar a descrição da pilha
 struct desc_pilha *criaDescPilha(void) {
@@ -13,23 +15,28 @@ struct desc_pilha *criaDescPilha(void) {
 // Função para criar uma música
 struct musica *criarMusica() {
     struct musica *m = malloc(sizeof(struct musica));
+    if (!m) {
+        printf("Erro de alocação!\n");
+        exit(1);
+    }
+
     printf("Título: ");
-    fgets(m->titulo, 256, stdin);
+    fgets(m->titulo, sizeof(m->titulo), stdin);
     m->titulo[strcspn(m->titulo, "\n")] = '\0';
 
     printf("Artista: ");
-    fgets(m->artista, 256, stdin);
+    fgets(m->artista, sizeof(m->artista), stdin);
     m->artista[strcspn(m->artista, "\n")] = '\0';
 
     printf("Letra: ");
-    fgets(m->letra, 256, stdin);
+    fgets(m->letra, sizeof(m->letra), stdin);
     m->letra[strcspn(m->letra, "\n")] = '\0';
 
     printf("Código: ");
     scanf("%d", &m->codigo);
     printf("Execuções: ");
     scanf("%d", &m->execucoes);
-    getchar(); // limpar buffer
+    getchar(); // limpa o buffer
     return m;
 }
 
@@ -68,6 +75,22 @@ struct nodo_pilha *topo(struct desc_pilha *pilha) {
 // Verifica se existe uma lista
 int procurarLista(struct desc_pilha *pilha) {
     return pilha != NULL && pilha->topo != NULL;
+}
+
+void lerArquivoMostrarMusicas(const char *nomeArquivo) {
+    FILE *fp = fopen(nomeArquivo, "r");
+    if (!fp) {
+        printf("Erro ao abrir o arquivo %s\n", nomeArquivo);
+        return;
+    }
+
+    char linha[512];
+    printf("\nMúsicas disponíveis no arquivo:\n");
+    while (fgets(linha, sizeof(linha), fp)) {
+        printf("- %s", linha);
+    }
+
+    fclose(fp);
 }
 
 // Imprimir pilha
