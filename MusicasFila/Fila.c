@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "Queue.h"
+#include "Fila.h"
 
 // Cria e retorna uma fila vazia
 struct desc_queue *CreateQueue() {
