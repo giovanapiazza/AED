@@ -1,4 +1,4 @@
-// PROGRAMA UNIFICADO EM PORTUGUÊS: PILHA E FILA DE MÚSICAS COM SWITCH CASE E OPERAÇÕES CONJUNTAS
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,7 +13,7 @@ struct musica {
     int execucoes;
 };
 
-// --------------------- PILHA ---------------------
+// PILHA
 
 struct nodo_pilha {
     struct musica *info;
@@ -58,7 +58,7 @@ void mostrarPilha(struct desc_pilha *pilha) { \\top
     printf("\n--- Músicas na Pilha ---\n");
     struct nodo_pilha *aux = pilha->topo;
     while (aux) {
-        printf("Título: %s\nArtista: %s\nLetra: %s\nCódigo: %d\nExecuções: %d\n-----------------------------\n",
+        printf("Título: %s\nArtista: %s\nLetra: %s\nCódigo: %d\nExecuções: %d\n",
                aux->info->titulo, aux->info->artista, aux->info->letra,
                aux->info->codigo, aux->info->execucoes);
         aux = aux->prox;
@@ -83,7 +83,7 @@ void liberarPilha(struct desc_pilha *pilha) {
     free(pilha);
 }
 
-// --------------------- FILA ---------------------
+//FILA
 
 struct nodo_fila {
     struct musica *info;
@@ -151,14 +151,14 @@ void mostrarFila(struct desc_fila *fila) {
     printf("\n--- Músicas na Fila ---\n");
     struct nodo_fila *aux = fila->inicio;
     while (aux) {
-        printf("Título: %s\nArtista: %s\nLetra: %s\nCódigo: %d\nExecuções: %d\n-----------------------------\n",
+        printf("Título: %s\nArtista: %s\nLetra: %s\nCódigo: %d\nExecuções: %d\n",
                aux->info->titulo, aux->info->artista, aux->info->letra,
                aux->info->codigo, aux->info->execucoes);
         aux = aux->prox;
     }
 }
 
-// --------------------- CRIA MÚSICA ---------------------
+// CRIA MÚSICA 
 
 struct musica *criarMusica() {
     struct musica *m = malloc(sizeof(struct musica));
@@ -171,7 +171,6 @@ struct musica *criarMusica() {
     return m;
 }
 
-// --------------------- PROGRAMA PRINCIPAL ---------------------
 
 int main() {
     struct desc_pilha *pilha = criarPilha();
