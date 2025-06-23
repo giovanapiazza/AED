@@ -1,4 +1,4 @@
-// PROGRAMA UNIFICADO EM PORTUGUÊS: PILHA E FILA DE MÚSICAS COM SWITCH CASE
+// PROGRAMA UNIFICADO EM PORTUGUÊS: PILHA E FILA DE MÚSICAS COM SWITCH CASE E OPERAÇÕES CONJUNTAS
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -32,7 +32,7 @@ struct desc_pilha *criarPilha() {
     return pilha;
 }
 
-void inserirPilha(struct desc_pilha *pilha, struct musica *m) {
+void inserirPilha(struct desc_pilha *pilha, struct musica *m) { \\push
     struct nodo_pilha *novo = malloc(sizeof(struct nodo_pilha));
     novo->info = m;
     novo->prox = pilha->topo;
@@ -40,7 +40,7 @@ void inserirPilha(struct desc_pilha *pilha, struct musica *m) {
     pilha->tamanho++;
 }
 
-struct musica *removerPilha(struct desc_pilha *pilha) {
+struct musica *removerPilha(struct desc_pilha *pilha) { \\pop
     if (pilha->topo == NULL) return NULL;
     struct nodo_pilha *aux = pilha->topo;
     struct musica *m = aux->info;
@@ -50,7 +50,7 @@ struct musica *removerPilha(struct desc_pilha *pilha) {
     return m;
 }
 
-void mostrarPilha(struct desc_pilha *pilha) {
+void mostrarPilha(struct desc_pilha *pilha) { \\top
     if (pilha->topo == NULL) {
         printf("Pilha vazia.\n");
         return;
@@ -63,6 +63,24 @@ void mostrarPilha(struct desc_pilha *pilha) {
                aux->info->codigo, aux->info->execucoes);
         aux = aux->prox;
     }
+}
+
+int pilhaVazia(struct desc_pilha *pilha) { \\empty
+    return pilha->topo == NULL;
+}
+
+int tamanhoPilha(struct desc_pilha *pilha) {
+    return pilha->tamanho;
+}
+
+void liberarPilha(struct desc_pilha *pilha) {
+    while (pilha->topo != NULL) {
+        struct nodo_pilha *atual = pilha->topo;
+        pilha->topo = atual->prox;
+        free(atual->info);
+        free(atual);
+    }
+    free(pilha);
 }
 
 // --------------------- FILA ---------------------
@@ -84,7 +102,7 @@ struct desc_fila *criarFila() {
     return fila;
 }
 
-void inserirFila(struct desc_fila *fila, struct musica *m) {
+void inserirFila(struct desc_fila *fila, struct musica *m) { \\enqueue
     struct nodo_fila *novo = malloc(sizeof(struct nodo_fila));
     novo->info = m;
     novo->prox = NULL;
@@ -96,7 +114,7 @@ void inserirFila(struct desc_fila *fila, struct musica *m) {
     fila->tamanho++;
 }
 
-struct musica *removerFila(struct desc_fila *fila) {
+struct musica *removerFila(struct desc_fila *fila) { \\dequeue
     if (fila->inicio == NULL) return NULL;
     struct nodo_fila *remover = fila->inicio;
     struct musica *m = remover->info;
@@ -107,7 +125,25 @@ struct musica *removerFila(struct desc_fila *fila) {
     return m;
 }
 
-void mostrarFila(struct desc_fila *fila) {
+int filaVazia(struct desc_fila *fila) {
+    return fila->inicio == NULL;
+}
+
+int tamanhoFila(struct desc_fila *fila) { \\length
+    return fila->tamanho;
+}
+
+void liberarFila(struct desc_fila *fila) {
+    while (fila->inicio != NULL) {
+        struct nodo_fila *atual = fila->inicio;
+        fila->inicio = atual->prox;
+        free(atual->info);
+        free(atual);
+    }
+    free(fila);
+}
+
+void mostrarFila(struct desc_fila *fila) { 
     if (fila->inicio == NULL) {
         printf("Fila vazia.\n");
         return;
@@ -144,42 +180,51 @@ int main() {
 
     do {
         printf("\n--- MENU ---\n");
-        printf("1 - Inserir na pilha\n");
-        printf("2 - Remover da pilha\n");
-        printf("3 - Mostrar pilha\n");
-        printf("4 - Inserir na fila\n");
-        printf("5 - Remover da fila\n");
-        printf("6 - Mostrar fila\n");
+        printf("1 - Inserir música (em ambos)\n");
+        printf("2 - Remover música (de ambos)\n");
+        printf("3 - Mostrar todas as músicas (pilha e fila)\n");
+        printf("4 - Verificar se pilha ou fila estão vazias\n");
+        printf("5 - Mostrar tamanhos da pilha e fila\n");
         printf("0 - Sair\n");
         printf("Escolha: ");
         scanf("%d", &op); getchar();
 
         switch(op) {
-            case 1:
-                inserirPilha(pilha, criarMusica());
-                break;
-            case 2: {
-                struct musica *m = removerPilha(pilha);
-                if (m) { printf("Removida: %s\n", m->titulo); free(m); }
-                else printf("Pilha vazia.\n");
+            case 1: {
+                struct musica *m1 = criarMusica();
+                struct musica *m2 = malloc(sizeof(struct musica));
+                *m2 = *m1;
+                inserirPilha(pilha, m1);
+                inserirFila(fila, m2);
+                printf("Música inserida na pilha e na fila.\n");
                 break;
             }
-            case 3:
-                mostrarPilha(pilha);
-                break;
-            case 4:
-                inserirFila(fila, criarMusica());
-                break;
-            case 5: {
-                struct musica *m = removerFila(fila);
-                if (m) { printf("Removida: %s\n", m->titulo); free(m); }
+            case 2: {
+                struct musica *mPilha = removerPilha(pilha);
+                struct musica *mFila = removerFila(fila);
+                if (mPilha) { printf("Removida da pilha: %s\n", mPilha->titulo); free(mPilha); }
+                else printf("Pilha vazia.\n");
+                if (mFila) { printf("Removida da fila: %s\n", mFila->titulo); free(mFila); }
                 else printf("Fila vazia.\n");
                 break;
             }
-            case 6:
+            case 3:
+                printf("\n--- PILHA ---\n");
+                mostrarPilha(pilha);
+                printf("\n--- FILA ---\n");
                 mostrarFila(fila);
                 break;
+            case 4:
+                printf("Pilha: %s\n", pilhaVazia(pilha) ? "Vazia" : "Com elementos");
+                printf("Fila: %s\n", filaVazia(fila) ? "Vazia" : "Com elementos");
+                break;
+            case 5:
+                printf("Tamanho da pilha: %d\n", tamanhoPilha(pilha));
+                printf("Tamanho da fila: %d\n", tamanhoFila(fila));
+                break;
             case 0:
+                liberarFila(fila);
+                liberarPilha(pilha);
                 printf("Encerrando programa...\n");
                 break;
             default:
