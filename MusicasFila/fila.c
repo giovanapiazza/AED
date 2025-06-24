@@ -1,5 +1,3 @@
-// PROGRAMA UNIFICADO EM PORTUGUÊS: PILHA E FILA DE MÚSICAS COM SWITCH CASE E MENU PERSONALIZADO
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,7 +11,7 @@ struct musica {
     int execucoes;
 };
 
-// --------------------- PILHA ---------------------
+//PILHA
 
 struct nodo_pilha {
     struct musica *info;
@@ -79,7 +77,7 @@ void liberarPilha(struct desc_pilha *pilha) {
     free(pilha);
 }
 
-// --------------------- FILA ---------------------
+// FILA 
 
 struct nodo_fila {
     struct musica *info;
@@ -150,7 +148,7 @@ void liberarFila(struct desc_fila *fila) {
     free(fila);
 }
 
-// --------------------- CRIA MÚSICA ---------------------
+// CRIA MÚSICA 
 
 struct musica *criarMusica() {
     struct musica *m = malloc(sizeof(struct musica));
@@ -162,8 +160,6 @@ struct musica *criarMusica() {
     getchar();
     return m;
 }
-
-// --------------------- PROGRAMA PRINCIPAL ---------------------
 
 int main() {
     struct desc_pilha *pilha = NULL;
