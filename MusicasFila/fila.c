@@ -32,7 +32,7 @@ struct desc_pilha *criarPilha() {
     return pilha;
 }
 
-void inserirPilha(struct desc_pilha *pilha, struct musica *m) {
+void inserirPilha(struct desc_pilha *pilha, struct musica *m) { push
     struct nodo_pilha *novo = malloc(sizeof(struct nodo_pilha));
     novo->info = m;
     novo->prox = pilha->topo;
@@ -40,7 +40,7 @@ void inserirPilha(struct desc_pilha *pilha, struct musica *m) {
     pilha->tamanho++;
 }
 
-struct musica *removerPilha(struct desc_pilha *pilha) {
+struct musica *removerPilha(struct desc_pilha *pilha) { pop
     if (pilha->topo == NULL) return NULL;
     struct nodo_pilha *aux = pilha->topo;
     struct musica *m = aux->info;
@@ -63,7 +63,7 @@ void mostrarPilha(struct desc_pilha *pilha) {
     }
 }
 
-struct musica *topoPilha(struct desc_pilha *pilha) {
+struct musica *topoPilha(struct desc_pilha *pilha) { top
     if (pilha->topo != NULL)
         return pilha->topo->info;
     return NULL;
@@ -190,6 +190,9 @@ int main() {
                 printf("Pilha e fila criadas.\n");
                 break;
             case 2: {
+                if (pilha->tamanho == 0){
+                  printf("É nécessario criar uma pilha antes");
+                } else {
                 struct musica *m1 = criarMusica();
                 struct musica *m2 = malloc(sizeof(struct musica));
                 *m2 = *m1;
@@ -197,6 +200,7 @@ int main() {
                 inserirFila(fila, m2);
                 printf("Música inserida em ambos.\n");
                 break;
+                }
             }
             case 3: {
                 struct musica *mPilha = removerPilha(pilha);
