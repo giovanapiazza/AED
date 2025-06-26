@@ -34,7 +34,7 @@ int main() {
                 printf("Digite o valor a ser removido: ");
                 scanf("%d", &valor);
                 avl->raiz = Remove(avl->raiz, valor);
-                printf("Remoção concluída (se o valor existia).\n");
+                printf("Remoção concluída.\n");
             } else {
                 printf("Crie a árvore e insira elementos primeiro!\n");
             }
