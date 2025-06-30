@@ -38,14 +38,10 @@ int main() {
                 playlistPilha = criarPilha();
                 printf("Playlist criada.\n");
                 break;
-            case 3: {
-                Musica *m = criarMusica();
-                if (m) {
-                    inserir(playlistFila, playlistPilha, m);
-                    printf("Música inserida na playlist.\n");
-                }
+            case 3:
+                inserir(playlistFila, playlistPilha, "musicas.txt");
                 break;
-            }
+
             case 4: {
                 Musica *removida = removerTopoPilha(playlistPilha);
                 if (removida) {
