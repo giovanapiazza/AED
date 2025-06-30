@@ -6,7 +6,7 @@
 int main() {
     Fila *playlistFila = criarFila();
     Pilha *playlistPilha = criarPilha();
-    char nomeArquivo[100] = "musicas.txt"; // valor padrão
+    char nomeArquivo[100] = "musicas.txt";
 
     if (!playlistFila || !playlistPilha) {
         printf("Erro ao criar playlist.\n");
@@ -18,73 +18,64 @@ int main() {
         printf("\nMenu:\n");
         printf("1- Carregar arquivo de músicas\n");
         printf("2- Criar nova playlist\n");
-        printf("3- Inserir música da biblioteca na playlist\n");
-        printf("4- Remover última música adicionada\n");
-        printf("5- Buscar por uma música\n");
-        printf("6- Imprimir uma música pelo código\n");
-        printf("7- Imprimir playlist\n");
-        printf("8- Ver última música adicionada\n");
+        printf("3- Inserir música na playlist\n");
+        printf("4- Remover musica na playlist\n");
+        printf("5- Imprimir uma música\n");
+        printf("6- Imprimir playlist (Back-up)\n");
         printf("0- Sair\n");
         printf("Escolha: ");
-        scanf("%d", &opcao);
-        getchar();
 
         switch(opcao) {
             case 1:
-                printf("Digite o nome do arquivo (ex: musicas.txt): ");
-                fgets(nomeArquivo, sizeof(nomeArquivo), stdin);
-                nomeArquivo[strcspn(nomeArquivo, "\n")] = '\0';
+                printf("Digite o nome do arquivo: ");
+                if (fgets(nomeArquivo, sizeof(nomeArquivo), stdin)) {
+                    nomeArquivo[strcspn(nomeArquivo, "\n")] = '\0';
+                }
                 carregar(nomeArquivo);
                 break;
 
             case 2:
-                destruirFila(playlistFila);
-                destruirPilha(playlistPilha);
-                playlistFila = criarFila();
-                playlistPilha = criarPilha();
-                printf("Playlist criada.\n");
                 break;
 
             case 3:
-                inserir(playlistFila, playlistPilha, nomeArquivo);
-                break;
+                if (pilha == Null){
+                    printf("Crie uma playlist antes\n");
+                }else{
 
-            case 4: {
-                Musica *removida = removerTopoPilha(playlistPilha);
-                if (removida) {
-                    free(removida);
-                    printf("Última música removida da playlist (pilha).\n");
-                } else {
-                    printf("Playlist vazia.\n");
                 }
                 break;
-            }
 
-            case 5:
-                buscar(playlistFila, playlistPilha);
+            case 4:
+                if (pilha == Null){
+                    printf("Crie uma playlist antes\n");
+                }else{
+                    
+                }
                 break;
 
-            case 6: {
-                int codigo;
-                printf("Digite o código da música: ");
-                scanf("%d", &codigo);
-                getchar();
-                Musica *m = buscarPorCodigo(playlistFila, codigo);
-                imprimirMusica(m);
-                break;
-            }
-
-            case 7:
-                mostrarFila(playlistFila);
+            case 5: 
+                if (pilha == Null){
+                    printf("Crie uma playlist antes\n");
+                }else{
+                    
+                }
                 break;
 
-            case 8:
-                imprimirMusica(topoPilha(playlistPilha));
+            case 6:
+                if (pilha == Null){
+                    printf("Crie uma playlist antes\n");
+                }else{
+                    
+                }
                 break;
-
+            
+            case 0: 
+                printf("Encerando...")
+                break;
+            
             case 0:
-                destruirFila(playlistFila);
-                destruirPilha(playlistPilha);
+                free(pilha);
+                free(fila);
                 printf("Saindo...\n");
                 break;
 
@@ -93,6 +84,7 @@ int main() {
         }
 
     } while (opcao != 0);
-
+    free(pilha);
+    free(fila);
     return 0;
 }
