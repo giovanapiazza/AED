@@ -30,14 +30,12 @@ void imprimirMusica(const Musica *m) {
 // --- Pilha ---
 Pilha *criarPilha() {
     Pilha *p = malloc(sizeof(Pilha));
-    if (!p) return NULL;
     p->topo = NULL;
     p->tamanho = 0;
     return p;
 }
 
 void destruirPilha(Pilha *p) {
-    if (!p) return;
     NodoPilha *aux = p->topo;
     while (aux) {
         NodoPilha *temp = aux;
@@ -49,9 +47,7 @@ void destruirPilha(Pilha *p) {
 }
 
 void inserirPilha(Pilha *p, Musica *m) {
-    if (!p || !m) return;
     NodoPilha *novo = malloc(sizeof(NodoPilha));
-    if (!novo) return;
     novo->info = m;
     novo->prox = p->topo;
     p->topo = novo;
@@ -59,7 +55,7 @@ void inserirPilha(Pilha *p, Musica *m) {
 }
 
 Musica *removerTopoPilha(Pilha *p) {
-    if (!p || p->topo == NULL) return NULL;
+    if (p->topo == NULL) return NULL;
     NodoPilha *temp = p->topo;
     Musica *m = temp->info;
     p->topo = temp->prox;
@@ -69,25 +65,23 @@ Musica *removerTopoPilha(Pilha *p) {
 }
 
 Musica *topoPilha(const Pilha *p) {
-    if (!p || p->topo == NULL) return NULL;
+    if (p->topo == NULL) return NULL;
     return p->topo->info;
 }
 
 int pilhaVazia(const Pilha *p) {
-    return (p == NULL || p->topo == NULL);
+    return p->topo == NULL;
 }
 
 // --- Fila ---
 Fila *criarFila() {
     Fila *f = malloc(sizeof(Fila));
-    if (!f) return NULL;
     f->inicio = f->fim = NULL;
     f->tamanho = 0;
     return f;
 }
 
 void destruirFila(Fila *f) {
-    if (!f) return;
     NodoFila *aux = f->inicio;
     while (aux) {
         NodoFila *temp = aux;
@@ -99,9 +93,7 @@ void destruirFila(Fila *f) {
 }
 
 void inserirFila(Fila *f, Musica *m) {
-    if (!f || !m) return;
     NodoFila *novo = malloc(sizeof(NodoFila));
-    if (!novo) return;
     novo->info = m;
     novo->prox = NULL;
 
@@ -115,7 +107,7 @@ void inserirFila(Fila *f, Musica *m) {
 }
 
 Musica *removerInicioFila(Fila *f) {
-    if (!f || f->inicio == NULL) return NULL;
+    if (f->inicio == NULL) return NULL;
     NodoFila *temp = f->inicio;
     Musica *m = temp->info;
     f->inicio = temp->prox;
@@ -127,7 +119,7 @@ Musica *removerInicioFila(Fila *f) {
 }
 
 int filaVazia(const Fila *f) {
-    return (f == NULL || f->inicio == NULL);
+    return f->inicio == NULL;
 }
 
 void mostrarFila(const Fila *f) {
@@ -135,34 +127,43 @@ void mostrarFila(const Fila *f) {
         printf("Playlist vazia.\n");
         return;
     }
-    printf("\n--- Músicas na Playlist ---\n");
+    printf("\n--- Playlist ---\n");
     NodoFila *aux = f->inicio;
     while (aux) {
-        printf("Título: %s\nArtista: %s\n", aux->info->titulo, aux->info->artista);
+        printf("Título: %s | Artista: %s\n", aux->info->titulo, aux->info->artista);
         aux = aux->prox;
     }
 }
 
 Musica *buscarPorCodigo(const Fila *f, int codigo) {
-    if (!f) return NULL;
     NodoFila *aux = f->inicio;
     while (aux) {
-        if (aux->info->codigo == codigo) {
+        if (aux->info->codigo == codigo)
             return aux->info;
-        }
         aux = aux->prox;
     }
     return NULL;
 }
 
 // --- Geral ---
+void carregar(const char *nomeArquivo) {
+    FILE *fp = fopen(nomeArquivo, "r");
+    if (!fp) {
+        printf("Erro ao abrir o arquivo \"%s\"\n", nomeArquivo);
+        return;
+    }
+
+    printf("\nMúsicas disponíveis no arquivo \"%s\":\n", nomeArquivo);
+    char linha[512];
+    while (fgets(linha, sizeof(linha), fp)) {
+        printf("- %s", linha);
+    }
+    fclose(fp);
+}
+
 void inserir(Fila *fila, Pilha *pilha, const char *nomeArquivo) {
     int op;
-    printf("Deseja buscar a música por:\n");
-    printf("1 - Título\n");
-    printf("2 - Código\n");
-    printf("3 - Artista\n");
-    printf("Opção: ");
+    printf("Buscar música por:\n1 - Título\n2 - Código\n3 - Artista\nOpção: ");
     scanf("%d", &op);
     getchar();
 
@@ -185,7 +186,7 @@ void inserir(Fila *fila, Pilha *pilha, const char *nomeArquivo) {
         while (fgets(linha, sizeof(linha), fp)) {
             sscanf(linha, "%[^;];%[^;];%[^;];%d;%d",
                    temp.titulo, temp.artista, temp.letra, &temp.codigo, &temp.execucoes);
-            if (strcasecmp(temp.titulo, titulo) == 0) {
+            if (strcmp(temp.titulo, titulo) == 0) {
                 encontrado = 1;
                 break;
             }
@@ -213,7 +214,7 @@ void inserir(Fila *fila, Pilha *pilha, const char *nomeArquivo) {
         while (fgets(linha, sizeof(linha), fp)) {
             sscanf(linha, "%[^;];%[^;];%[^;];%d;%d",
                    temp.titulo, temp.artista, temp.letra, &temp.codigo, &temp.execucoes);
-            if (strcasecmp(temp.artista, artista) == 0) {
+            if (strcmp(temp.artista, artista) == 0) {
                 encontrado = 1;
                 break;
             }
@@ -223,13 +224,11 @@ void inserir(Fila *fila, Pilha *pilha, const char *nomeArquivo) {
     fclose(fp);
 
     if (encontrado) {
-        printf("\nMúsica encontrada:\n");
         imprimirMusica(&temp);
 
-        // Verifica se já está na playlist
         NodoFila *aux = fila->inicio;
-        while (aux != NULL) {
-            if (strcasecmp(aux->info->titulo, temp.titulo) == 0) {
+        while (aux) {
+            if (strcmp(aux->info->titulo, temp.titulo) == 0) {
                 printf("Essa música já está na playlist.\n");
                 return;
             }
@@ -247,129 +246,12 @@ void inserir(Fila *fila, Pilha *pilha, const char *nomeArquivo) {
             inserirPilha(pilha, nova);
             inserirFila(fila, nova);
             printf("Música adicionada à playlist com sucesso!\n");
-        } else {
-            printf("Música não adicionada.\n");
-        }
-    } else {
-        printf("Música não encontrada no arquivo.\n");
-    }
-}
-
-
-void carregar(const char *nomeArquivo) {
-    FILE *fp = fopen(nomeArquivo, "r");
-    if (!fp) {
-        printf("Erro ao abrir o arquivo %s\n", nomeArquivo);
-        return;
-    }
-
-    printf("\nMúsicas disponíveis no arquivo:\n");
-    char linha[512];
-    while (fgets(linha, sizeof(linha), fp)) {
-        printf("- %s", linha);
-    }
-    fclose(fp);
-}
-
-void buscar(Fila *fila, Pilha *pilha) {
-    int proc;
-    printf("1- Procurar por nome\n");
-    printf("2- Procurar por código\n");
-    printf("3- Procurar por artista\n");
-    scanf("%d", &proc);
-    getchar();
-
-    FILE *fp = fopen("musicas.txt", "r");
-    if (!fp) {
-        printf("Erro ao abrir o arquivo.\n");
-        return;
-    }
-
-    char linha[512];
-    int encontrado = 0;
-    Musica temp;
-
-    if (proc == 1) {
-        char nome[256];
-        printf("Digite o nome da música: ");
-        fgets(nome, 256, stdin);
-        nome[strcspn(nome, "\n")] = '\0';
-
-        while (fgets(linha, sizeof(linha), fp)) {
-            sscanf(linha, "%[^;];%[^;];%[^;];%d;%d",
-                   temp.titulo, temp.artista, temp.letra, &temp.codigo, &temp.execucoes);
-            if (strcasecmp(temp.titulo, nome) == 0) {
-                encontrado = 1;
-                break;
-            }
-        }
-    } else if (proc == 2) {
-        int codigo;
-        printf("Digite o código da música: ");
-        scanf("%d", &codigo);
-        getchar();
-
-        while (fgets(linha, sizeof(linha), fp)) {
-            sscanf(linha, "%[^;];%[^;];%[^;];%d;%d",
-                   temp.titulo, temp.artista, temp.letra, &temp.codigo, &temp.execucoes);
-            if (temp.codigo == codigo) {
-                encontrado = 1;
-                break;
-            }
-        }
-    } else if (proc == 3) {
-        char artista[256];
-        printf("Digite o nome do artista: ");
-        fgets(artista, 256, stdin);
-        artista[strcspn(artista, "\n")] = '\0';
-
-        while (fgets(linha, sizeof(linha), fp)) {
-            sscanf(linha, "%[^;];%[^;];%[^;];%d;%d",
-                   temp.titulo, temp.artista, temp.letra, &temp.codigo, &temp.execucoes);
-            if (strcasecmp(temp.artista, artista) == 0) {
-                encontrado = 1;
-                break;
-            }
-        }
-    }
-
-    fclose(fp);
-
-    if (encontrado) {
-        printf("\nMúsica encontrada:\nTítulo: %s\nArtista: %s\nCódigo: %d\nExecuções: %d\n",
-               temp.titulo, temp.artista, temp.codigo, temp.execucoes);
-
-        // Verificar se já está na playlist
-        int jaExiste = 0;
-        NodoFila *aux = fila->inicio;
-        while (aux != NULL) {
-            if (strcasecmp(aux->info->titulo, temp.titulo) == 0) {
-                jaExiste = 1;
-                break;
-            }
-            aux = aux->prox;
-        }
-
-        if (!jaExiste) {
-            printf("Deseja adicioná-la à playlist? (s/n): ");
-            char r;
-            scanf(" %c", &r);
-            getchar();
-
-            if (r == 's' || r == 'S') {
-                Musica *nova = malloc(sizeof(Musica));
-                if (nova) {
-                    *nova = temp;
-                    inserir(fila, pilha, nova);
-                    printf("Música adicionada à playlist!\n");
-                }
-            } else {
-                printf("Música não adicionada.\n");
-            }
-        } else {
-            printf("A música já está na playlist.\n");
         }
     } else {
         printf("Música não encontrada.\n");
     }
+}
+
+void buscar(Fila *fila, Pilha *pilha) {
+    printf("Função de busca separada pode ser implementada ou reutilizar a inserir()\n");
 }
