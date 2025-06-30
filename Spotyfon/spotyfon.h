@@ -51,7 +51,7 @@ void mostrarFila(const Fila *f);
 Musica *buscarPorCodigo(const Fila *f, int codigo);
 
 // Funções Gerais
-void inserir(Fila *fila, Pilha *pilha, Musica *m);
+void inserir(Fila *fila, Pilha *pilha, const char *nomeArquivo);
 void carregar(const char *nomeArquivo);
 void buscar(Fila *fila, Pilha *pilha);
 
