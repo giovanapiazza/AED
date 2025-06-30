@@ -49,9 +49,10 @@ Musica *removerInicioFila(Fila *f);
 int filaVazia(const Fila *f);
 void mostrarFila(const Fila *f);
 Musica *buscarPorCodigo(const Fila *f, int codigo);
+void removerPorCodigoFila(Fila *f, int codigo);  // função para remover música da fila por código
 
 // Funções Gerais
-void inserir(Fila *fila, Pilha *pilha, const char *nomeArquivo);
+void inserirMusicaNaPlaylist(Fila *fila, Pilha *pilha, const char *nomeArquivo);
 void carregar(const char *nomeArquivo);
 void buscar(Fila *fila, Pilha *pilha);
 
