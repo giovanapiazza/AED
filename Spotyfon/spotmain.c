@@ -1,10 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "spotyfon.h"
 
 int main() {
     Fila *playlistFila = criarFila();
     Pilha *playlistPilha = criarPilha();
+    char nomeArquivo[100] = "musicas.txt"; // valor padrão
 
     if (!playlistFila || !playlistPilha) {
         printf("Erro ao criar playlist.\n");
@@ -15,8 +17,8 @@ int main() {
     do {
         printf("\nMenu:\n");
         printf("1- Carregar arquivo de músicas\n");
-        printf("2- Criar playlist\n");
-        printf("3- Inserir música manualmente\n");
+        printf("2- Criar nova playlist\n");
+        printf("3- Inserir música da biblioteca na playlist\n");
         printf("4- Remover última música adicionada\n");
         printf("5- Buscar por uma música\n");
         printf("6- Imprimir uma música pelo código\n");
@@ -29,8 +31,12 @@ int main() {
 
         switch(opcao) {
             case 1:
-                carregar("musicas.txt");
+                printf("Digite o nome do arquivo (ex: musicas.txt): ");
+                fgets(nomeArquivo, sizeof(nomeArquivo), stdin);
+                nomeArquivo[strcspn(nomeArquivo, "\n")] = '\0';
+                carregar(nomeArquivo);
                 break;
+
             case 2:
                 destruirFila(playlistFila);
                 destruirPilha(playlistPilha);
@@ -38,14 +44,14 @@ int main() {
                 playlistPilha = criarPilha();
                 printf("Playlist criada.\n");
                 break;
+
             case 3:
-                inserir(playlistFila, playlistPilha, "musicas.txt");
+                inserir(playlistFila, playlistPilha, nomeArquivo);
                 break;
 
             case 4: {
                 Musica *removida = removerTopoPilha(playlistPilha);
                 if (removida) {
-                    // NOTA: Remover da fila não implementado para simplicidade
                     free(removida);
                     printf("Última música removida da playlist (pilha).\n");
                 } else {
@@ -53,36 +59,40 @@ int main() {
                 }
                 break;
             }
+
             case 5:
                 buscar(playlistFila, playlistPilha);
                 break;
+
             case 6: {
                 int codigo;
-                printf("Digite o código da música para imprimir: ");
+                printf("Digite o código da música: ");
                 scanf("%d", &codigo);
                 getchar();
                 Musica *m = buscarPorCodigo(playlistFila, codigo);
                 imprimirMusica(m);
                 break;
             }
+
             case 7:
                 mostrarFila(playlistFila);
                 break;
-            case 8: {
-                Musica *ultima = topoPilha(playlistPilha);
-                imprimirMusica(ultima);
+
+            case 8:
+                imprimirMusica(topoPilha(playlistPilha));
                 break;
-            }
-            case 9:
+
+            case 0:
                 destruirFila(playlistFila);
                 destruirPilha(playlistPilha);
                 printf("Saindo...\n");
                 break;
+
             default:
                 printf("Opção inválida.\n");
         }
 
-    } while (opcao != 9);
+    } while (opcao != 0);
 
     return 0;
 }
