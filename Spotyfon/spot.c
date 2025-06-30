@@ -156,10 +156,105 @@ Musica *buscarPorCodigo(const Fila *f, int codigo) {
 }
 
 // --- Geral ---
-void inserir(Fila *fila, Pilha *pilha, Musica *m) {
-    inserirPilha(pilha, m);
-    inserirFila(fila, m);
+void inserir(Fila *fila, Pilha *pilha, const char *nomeArquivo) {
+    int op;
+    printf("Deseja buscar a música por:\n");
+    printf("1 - Título\n");
+    printf("2 - Código\n");
+    printf("3 - Artista\n");
+    printf("Opção: ");
+    scanf("%d", &op);
+    getchar();
+
+    char linha[512];
+    Musica temp;
+    int encontrado = 0;
+
+    FILE *fp = fopen(nomeArquivo, "r");
+    if (!fp) {
+        printf("Erro ao abrir o arquivo.\n");
+        return;
+    }
+
+    if (op == 1) {
+        char titulo[256];
+        printf("Digite o título: ");
+        fgets(titulo, 256, stdin);
+        titulo[strcspn(titulo, "\n")] = '\0';
+
+        while (fgets(linha, sizeof(linha), fp)) {
+            sscanf(linha, "%[^;];%[^;];%[^;];%d;%d",
+                   temp.titulo, temp.artista, temp.letra, &temp.codigo, &temp.execucoes);
+            if (strcasecmp(temp.titulo, titulo) == 0) {
+                encontrado = 1;
+                break;
+            }
+        }
+    } else if (op == 2) {
+        int codigo;
+        printf("Digite o código: ");
+        scanf("%d", &codigo);
+        getchar();
+
+        while (fgets(linha, sizeof(linha), fp)) {
+            sscanf(linha, "%[^;];%[^;];%[^;];%d;%d",
+                   temp.titulo, temp.artista, temp.letra, &temp.codigo, &temp.execucoes);
+            if (temp.codigo == codigo) {
+                encontrado = 1;
+                break;
+            }
+        }
+    } else if (op == 3) {
+        char artista[256];
+        printf("Digite o nome do artista: ");
+        fgets(artista, 256, stdin);
+        artista[strcspn(artista, "\n")] = '\0';
+
+        while (fgets(linha, sizeof(linha), fp)) {
+            sscanf(linha, "%[^;];%[^;];%[^;];%d;%d",
+                   temp.titulo, temp.artista, temp.letra, &temp.codigo, &temp.execucoes);
+            if (strcasecmp(temp.artista, artista) == 0) {
+                encontrado = 1;
+                break;
+            }
+        }
+    }
+
+    fclose(fp);
+
+    if (encontrado) {
+        printf("\nMúsica encontrada:\n");
+        imprimirMusica(&temp);
+
+        // Verifica se já está na playlist
+        NodoFila *aux = fila->inicio;
+        while (aux != NULL) {
+            if (strcasecmp(aux->info->titulo, temp.titulo) == 0) {
+                printf("Essa música já está na playlist.\n");
+                return;
+            }
+            aux = aux->prox;
+        }
+
+        char r;
+        printf("Deseja inserir na playlist? (s/n): ");
+        scanf(" %c", &r);
+        getchar();
+
+        if (r == 's' || r == 'S') {
+            Musica *nova = malloc(sizeof(Musica));
+            *nova = temp;
+            inserirPilha(pilha, nova);
+            inserirFila(fila, nova);
+            printf("Música adicionada à playlist com sucesso!\n");
+        } else {
+            printf("Música não adicionada.\n");
+        }
+    } else {
+        printf("Música não encontrada no arquivo.\n");
+    }
 }
+
 
 void carregar(const char *nomeArquivo) {
     FILE *fp = fopen(nomeArquivo, "r");
@@ -203,7 +298,7 @@ void buscar(Fila *fila, Pilha *pilha) {
         while (fgets(linha, sizeof(linha), fp)) {
             sscanf(linha, "%[^;];%[^;];%[^;];%d;%d",
                    temp.titulo, temp.artista, temp.letra, &temp.codigo, &temp.execucoes);
-            if (strcmp(temp.titulo, nome) == 0) {
+            if (strcasecmp(temp.titulo, nome) == 0) {
                 encontrado = 1;
                 break;
             }
@@ -231,7 +326,7 @@ void buscar(Fila *fila, Pilha *pilha) {
         while (fgets(linha, sizeof(linha), fp)) {
             sscanf(linha, "%[^;];%[^;];%[^;];%d;%d",
                    temp.titulo, temp.artista, temp.letra, &temp.codigo, &temp.execucoes);
-            if (strcmp(temp.artista, artista) == 0) {
+            if (strcasecmp(temp.artista, artista) == 0) {
                 encontrado = 1;
                 break;
             }
@@ -248,7 +343,7 @@ void buscar(Fila *fila, Pilha *pilha) {
         int jaExiste = 0;
         NodoFila *aux = fila->inicio;
         while (aux != NULL) {
-            if (strcmp(aux->info->titulo, temp.titulo) == 0) {
+            if (strcasecmp(aux->info->titulo, temp.titulo) == 0) {
                 jaExiste = 1;
                 break;
             }
