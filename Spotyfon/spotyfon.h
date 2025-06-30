@@ -56,4 +56,3 @@ void carregar(const char *nomeArquivo);
 void buscar(Fila *fila, Pilha *pilha);
 
 #endif
-
