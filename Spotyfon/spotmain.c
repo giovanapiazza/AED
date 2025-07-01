@@ -4,16 +4,12 @@
 #include "spotyfon.h"
 
 int main() {
-    Fila *playlistFila = criarFila();
-    Pilha *playlistPilha = criarPilha();
+    struct desc_fila *minhaFila = Createfila();
+    struct desc_pilha *minhaPilha = criaDescPilha();
     char nomeArquivo[100];
-
-    if (!playlistFila || !playlistPilha) {
-        printf("Erro ao criar playlist.\n");
-        return 1;
-    }
-
+    char confirma;
     int opcao;
+    
     do {
         printf("\nMenu:\n");
         printf("1- Carregar arquivo de músicas\n");
@@ -31,62 +27,68 @@ int main() {
             case 1:
                 printf("Digite o nome do arquivo: ");
                 if (fgets(nomeArquivo, sizeof(nomeArquivo), stdin)) {
-                    nomeArquivo[strcspn(nomeArquivo, "\n")] = '\0'; // remove \n
+                    nomeArquivo[strcspn(nomeArquivo, "\n")] = '\0'; 
                 }
-                carregar(nomeArquivo, playlistFila);
+                carregar(nomeArquivo, minhaFila);
                 break;
 
-            case 2: {
-                char confirma;
-                if (playlistPilha->tamanho > 0 || playlistFila->tamanho > 0) {
+            case 2:                 
+                // Verifica se já existe conteúdo na playlist
+                if (minhaPilha->tamanho > 0 || minhaFila->tamanho > 0) {
                     printf("Ao fazer isso você irá sobrescrever uma playlist anterior.\nTem certeza disso? (s/n): ");
                     scanf(" %c", &confirma);
-                    getchar();
+                    getchar(); 
+                
                     if (confirma == 's' || confirma == 'S') {
-                        freeFila(playlistFila);
-                        freePilha(playlistPilha);
-                        playlistFila = criarFila();
-                        playlistPilha = criarPilha();
+                        // Libera memória da playlist anterior
+                        freeFila(minhaFila);
+                        freePilha(minhaPilha);
+                
+                        // Cria nova fila e pilha
+                        minhaFila = Createfila();
+                       minhaPilha = criaDescPilha();
                         printf("Nova playlist criada com sucesso!\n");
-                    } else if (confirma == N || confirma == n) {
+                    } else if (confirma == 'n' || confirma == 'N') {
                         printf("Operação cancelada.\n");
                     } else {
-                        printf("Opção invalida");
+                        printf("Opção inválida.\n");
+                    }
                 } else {
+                    // Se a playlist ainda não existe, apenas cria
+                    minhaFila = Createfila();
+                   minhaPilha = criaDescPilha();
                     printf("Playlist criada com sucesso!\n");
                 }
+
                 break;
-            }
 
             case 3:
-                if (!playlistPilha) {
+                if (minhaPilha->tamanho == 0 && minhaFila->tamanho == 0) {
                     printf("Crie uma playlist antes.\n");
                 } else {
-                    inserirMusicaNaPlaylist(playlistFila, playlistPilha, nomeArquivo);
+                    buscarEInserirMusica("musicas.txt", minhaFila, minhaPilha);
                 }
                 break;
 
             case 4:
-                if (!playlistPilha) {
-                    printf("Crie uma playlist antes.\n");
-                } else {
-                    imprimirMusica(); // implementar
-                }
+                Musica resultado;
+                buscarMusica("musicas.txt", &resultado, minhaFila, minhaPilha);
                 break;
 
             case 5:
-                if (!playlistPilha) {
+                if (minhaPilha->tamanho == 0 && minhaFila->tamanho == 0) {
                     printf("Crie uma playlist antes.\n");
                 } else {
-                    imprimirRelatorio(playlistPilha); // implementar
+                     salvarPlaylistCompleta(minhaFila, minhaPilha, "playlist_fila.txt", "playlist_pilha.txt");
                 }
                 break;
 
             case 6:
-                if (!playlistPilha) {
+                if (minhaPilha->tamanho == 0 && minhaFila->tamanho == 0) {
                     printf("Crie uma playlist antes.\n");
                 } else {
-                    mostra(playlistPilha, playlistFila); // 
+                    exportarPlaylistCompleta(minhaFila, minhaPilha);
+ 
                 }
                 break;
 
@@ -100,7 +102,7 @@ int main() {
 
     } while (opcao != 0);
 
-    freePilha(playlistPilha);
-    freeFila(playlistFila);
+    freePilha(minhaPilha);
+    freeFila(minhaFila);
     return 0;
 }
