@@ -1,71 +1,72 @@
 #ifndef SPOTYFON_H
 #define SPOTYFON_H
 
-// Definição da struct Musica
-typedef struct musica {
-    char titulo[256];
+#include <stdio.h>
+
+typedef struct {
     char artista[256];
-    char letra[256];
     int codigo;
+    char titulo[256];
+    char letra[256];
     int execucoes;
 } Musica;
 
-// Pilha
-struct nodo_pilha {
-    Musica *info;
-    struct nodo_pilha *prox;
-};
+// Funções gerais
+int carregarMusicas(const char *nomeArquivo, Musica lista[], int max);
+void imprimirMusica(Musica *m);
 
-struct desc_pilha {
-    struct nodo_pilha *topo;
+// Pilha
+typedef struct nodoPilha {
+    Musica *musica;
+    struct nodoPilha *prox;
+} NodoPilha;
+
+typedef struct {
+    NodoPilha *topo;
     int tamanho;
-};
+} DescPilha;
+
+DescPilha *criaDescPilha(void);
+NodoPilha *criaNodoPilha(Musica *m);
+void inserirPilha(DescPilha *pilha, NodoPilha *novoElemento);
+int existePilha(DescPilha *pilha);
+int tamanhoPilha(DescPilha *pilha);
+void imprimirPilha(DescPilha *pilha);
+void salvarPilhaSimples(DescPilha *pilha, const char *nomeArquivo);
+void exportarPilhaCompleta(DescPilha *pilha, const char *nomeArquivo);
+void freePilha(DescPilha *pilha);
 
 // Fila
-struct nodo_fila {
-    Musica *info;
-    struct nodo_fila *prox;
-};
-struct desc_fila {
-    struct nodo_fila *head;
-    struct nodo_fila *tail;
+typedef struct nodoFila {
+    Musica *musica;
+    struct nodoFila *prox;
+} NodoFila;
+
+typedef struct {
+    NodoFila *inicio;
+    NodoFila *fim;
     int tamanho;
-};
+} DescFila;
 
+DescFila *createFila(void);
+void inserirFila(DescFila *fila, Musica *m);
+int existeFila(DescFila *fila);
+int tamanhoFila(DescFila *fila);
+void imprimirFila(DescFila *fila);
+void salvarFilaSimples(DescFila *fila, const char *nomeArquivo);
+void exportarFilaCompleta(DescFila *fila, const char *nomeArquivo);
+void freeFila(DescFila *fila);
 
-// Ffunções da pilha
-struct desc_pilha *criaDescPilha(void);
-struct nodo_pilha *criaNodoPilha(Musica *m);
-void inserirPilha(struct desc_pilha *pilha, struct nodo_pilha *novoElemento);
-int existePilha(struct desc_pilha *pilha);
-int tamanhoPilha(struct desc_pilha *pilha);
-void imprimirPilha(struct desc_pilha *pilha);
-void salvarPilhaSimples(struct desc_pilha *pilha, const char *nomeArquivo);
-void exportarPilhaCompleta(struct desc_pilha *pilha, const char *nomeArquivo);
-void freePilha(struct desc_pilha *pilha);
-
-// Funções da fila
-struct desc_fila *Createfila(void);
-void liberarFila(struct desc_fila *fila);
-void inserirFila(struct desc_fila *fila, Musica *m);
-int existeFila(struct desc_fila *fila);
-int tamanhoFila(struct desc_fila *fila);
-void imprimirFila(struct desc_fila *fila);
-void salvarFilaSimples(struct desc_fila *fila, const char *nomeArquivo);
-void exportarFilaCompleta(struct desc_fila *fila, const char *nomeArquivo);
-void freeFila(struct desc_fila *fila);
-
-// Funções gerais e utilitárias
-void carregar(const char *nomeArquivo, struct desc_fila *fila);
-void lerArquivo(const char *nomeArquivo);
-void imprimir(struct desc_fila *fila, struct desc_pilha *pilha);
-void buscarEInserirMusica(const char *nomeArquivo, struct desc_fila *fila, struct desc_pilha *pilha);
-void buscarMusica(const char *nomeArquivo, Musica *resultado, struct desc_fila *fila, struct desc_pilha *pilha);
-void buscarMusicaPlaylistPorTitulo(const char *titulo, Musica *resultado);
-void buscarMusicaPlaylistPorArtista(const char *artista, Musica *resultado);
-void buscarMusicaPlaylistPorCodigo(int codigo, Musica *resultado);
+// Busca
 int buscarMusicaArquivo(const char *nomeArquivo, Musica *resultado, int criterio, const char *valorStr, int valorInt);
-void salvarPlaylistCompleta(struct desc_fila *fila, struct desc_pilha *pilha, const char *nomeArquivoFila, const char *nomeArquivoPilha);
-void exportarPlaylistCompleta(struct desc_fila *fila, struct desc_pilha *pilha);
+int buscarMusicaPlaylistPorCodigo(DescFila *fila, int codigo, Musica *resultado);
+int buscarMusicaPlaylistPorArtista(DescFila *fila, const char *artista, Musica *resultado);
+int buscarMusicaPlaylistPorTitulo(DescFila *fila, const char *titulo, Musica *resultado);
+void buscarMusica(const char *nomeArquivo, Musica *resultado, DescFila *fila, DescPilha *pilha);
+void buscarEInserirMusica(const char *nomeArquivo, DescFila *fila, DescPilha *pilha);
 
-#endif 
+// Salvar e exportar playlist
+void salvarPlaylistSimples(DescFila *fila, DescPilha *pilha, const char *nomeArquivoFila, const char *nomeArquivoPilha);
+void exportarPlaylistCompleta(DescFila *fila, DescPilha *pilha);
+
+#endif
