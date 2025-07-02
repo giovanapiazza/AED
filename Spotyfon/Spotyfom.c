@@ -353,7 +353,7 @@ void buscarEInserirMusica(Lista *lista, Fila *fila, Pilha *pilha) {
         push(pilha, resultado);
         printf("Musica inserida na playlist com sucesso!\n");
     } else {
-        printf("Musica não encontrada.\n");
+        printf("Musica nao encontrada.\n");
     }
 }
 
@@ -379,16 +379,16 @@ void salvarBackup(Fila *fila, const char *nomeback) {
 void imprimirTudo(Lista *lista, Fila *fila, Pilha *pilha) {
     int op;
     do {
-        printf("\nMenu de Impressão:\n");
+        printf("\nMenu de Impressao:\n");
         printf("0 - Cancelar\n");
         printf("1 - Imprimir Playlist como fila\n");
         printf("2 - Imprimir Playlist como pilha\n");
         printf("3 - Imprimir uma musica do acervo\n");
-        printf("Escolha uma opção: ");
+        printf("Escolha uma opcao: ");
 
         if (scanf("%d", &op) != 1) {
             while (getchar() != '\n');
-            printf("Entrada inválida!\n");
+            printf("Entrada invalida!\n");
             continue;
         }
         getchar(); // limpa o \n
@@ -430,7 +430,7 @@ void imprimirTudo(Lista *lista, Fila *fila, Pilha *pilha) {
 
                 if (scanf("%d", &criterio) != 1) {
                     while (getchar() != '\n');
-                    printf("Entrada inválida!\n");
+                    printf("Entrada invalida!\n");
                     break;
                 }
                 getchar();
@@ -445,7 +445,7 @@ void imprimirTudo(Lista *lista, Fila *fila, Pilha *pilha) {
                         printf("Codigo: ");
                         if (scanf("%d", &valorInt) != 1) {
                             while (getchar() != '\n');
-                            printf("Entrada inválida!\n");
+                            printf("Entrada invalida!\n");
                             break;
                         }
                         getchar();
@@ -480,12 +480,12 @@ void imprimirTudo(Lista *lista, Fila *fila, Pilha *pilha) {
                 if (achou) {
                     imprimirMusica(&resultado);
                 } else {
-                    printf("Musica não encontrada.\n");
+                    printf("Musica nao encontrada.\n");
                 }
                 break;
 
             default:
-                printf("Opção inválida, tente novamente.\n");
+                printf("Opcao invalida, tente novamente.\n");
                 break;
         }
 
@@ -499,7 +499,7 @@ void salvarRelatorio(const char *nomeRelatorio, Fila *fila, Lista *lista) {
         return;
     }
 
-    fprintf(arq, "RELAOÓRIO DA PLAYLIST\n");
+    fprintf(arq, "RELAORIO DA PLAYLIST\n");
     fprintf(arq, "=====================\n\n");
 
     NodoFila *atual = fila->inicio;
@@ -562,13 +562,13 @@ void importacao(Lista *lista, Fila *fila, Pilha *pilha, int *carregouArquivo) {
     char nomeArq[100];
 
     printf("Importar:\n");
-    printf("1 - Acervo original de musicas\n");
+    printf("1 - Acervo de musicas\n");
     printf("2 - Backup da playlist\n");
     printf("Escolha: ");
 
     if (scanf("%d", &tipo) != 1) {
         while (getchar() != '\n');
-        printf("Entrada inválida!\n");
+        printf("Entrada invalida!\n");
         return;
     }
     getchar();
@@ -595,7 +595,7 @@ void importacao(Lista *lista, Fila *fila, Pilha *pilha, int *carregouArquivo) {
             break;
 
         default:
-            printf("Opção inválida.\n");
+            printf("Opcao invalida.\n");
             break;
     }
 }
@@ -603,7 +603,7 @@ void importacao(Lista *lista, Fila *fila, Pilha *pilha, int *carregouArquivo) {
 void criarPlaylist(Fila *fila, Pilha *pilha) {
     char confirmacao;
 
-    printf("Ao fazer isso, você irá sobrescrever a playlist anterior.\n");
+    printf("Ao fazer isso, voce ira sobrescrever a playlist anterior.\n");
     printf("Tem certeza que deseja continuar? (s/n): ");
     scanf(" %c", &confirmacao);
 
@@ -691,16 +691,16 @@ int main() {
 
             case 6:
                 if (!carregouArquivo) {
-                    printf("Você deve carregar um arquivo primeiro.\n");
+                    printf("Voce deve carregar um arquivo primeiro.\n");
                     break;
                 }
                 if (playlistFila.inicio == NULL && playlistFila.fim == NULL && playlistFila.tamanho == 0) {
-                    printf("A playlist ainda não foi criada.\n");
+                    printf("A playlist ainda nao foi criada.\n");
                     break;
                 }
 
                 if (filaVazia(&playlistFila)) {
-                    printf("A playlist está vazia. Nada a salvar.\n");
+                    printf("A playlist esta vazia. Nada a salvar.\n");
                 } else {
                     char nomeback[256];
                     printf("Digite o nome do arquivo para backup (ex: backup.txt): ");
