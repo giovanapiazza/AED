@@ -204,24 +204,24 @@ int buscarMusicaLista(Lista *lista, Musica *resultado, int criterio, const char 
 
         // Imprime todas as músicas do artista
         int encontrouAlguma = 0;
-        printf("Músicas do artista \"%s\":\n", valorStr);
+        printf("Musicas do artista \"%s\":\n", valorStr);
         while (atual) {
             if (strcasecmp(atual->musica.artista, valorStr) == 0) {
-                printf("Código: %d | Título: %s\n", atual->musica.codigo, atual->musica.titulo);
+                printf("Codigo: %d | Titulo: %s\n", atual->musica.codigo, atual->musica.titulo);
                 encontrouAlguma = 1;
             }
             atual = atual->prox;
         }
         if (!encontrouAlguma) {
-            printf("Nenhuma música encontrada desse artista.\n");
+            printf("Nenhuma musica encontrada desse artista.\n");
             return 0;
         }
 
         // Pergunta qual código o usuário quer
-        printf("Digite o código da música que deseja escolher: ");
+        printf("Digite o codigo da musica que deseja escolher: ");
         if (scanf("%d", &valorInt) != 1) {
             while(getchar() != '\n');
-            printf("Código inválido.\n");
+            printf("Codigo invalido.\n");
             return 0;
         }
         getchar(); // limpa \n
@@ -235,7 +235,7 @@ int buscarMusicaLista(Lista *lista, Musica *resultado, int criterio, const char 
             }
             atual = atual->prox;
         }
-        printf("Código não encontrado.\n");
+        printf("Codigo nao encontrado.\n");
         return 0;
     } 
     else {  // Caso código ou título, busca normal
@@ -268,11 +268,11 @@ void buscarEInserirMusica(Lista *lista, Fila *fila, Pilha *pilha) {
     int valorInt;
     Musica resultado;
 
-    printf("Buscar música para inserir na playlist:\n");
+    printf("Buscar musica para inserir na playlist:\n");
     printf("0 - Cancelar\n");
-    printf("1 - Código\n");
+    printf("1 - Codigo\n");
     printf("2 - Artista\n");
-    printf("3 - Título\n");
+    printf("3 - Titulo\n");
     printf("Escolha: ");
     if (scanf("%d", &criterio) != 1) return;
     getchar();
@@ -281,14 +281,14 @@ void buscarEInserirMusica(Lista *lista, Fila *fila, Pilha *pilha) {
 
     switch (criterio) {
         case 0:
-            printf("Operação cancelada.\n");
+            printf("Operacao cancelada.\n");
             return;
 
         case 1:
-            printf("Digite o código: ");
+            printf("Digite o codigo: ");
             if (scanf("%d", &valorInt) != 1) {
                 while (getchar() != '\n');
-                printf("Código inválido.\n");
+                printf("Codigo invalido.\n");
                 return;
             }
             getchar();
@@ -307,24 +307,24 @@ void buscarEInserirMusica(Lista *lista, Fila *fila, Pilha *pilha) {
             Nodo *p = lista->inicio;
             int encontrouAlguma = 0;
 
-            printf("\nMúsicas do artista \"%s\":\n", valorStr);
+            printf("\nMusicas do artista \"%s\":\n", valorStr);
             while (p != NULL) {
                 if (strcasecmp(p->musica.artista, valorStr) == 0) {
-                    printf("Código: %d | Título: %s\n", p->musica.codigo, p->musica.titulo);
+                    printf("Codigo: %d | Titulo: %s\n", p->musica.codigo, p->musica.titulo);
                     encontrouAlguma = 1;
                 }
                 p = p->prox;
             }
 
             if (!encontrouAlguma) {
-                printf("Nenhuma música encontrada desse artista.\n");
+                printf("Nenhuma musica encontrada desse artista.\n");
                 return;
             }
 
-            printf("Digite o código da música que deseja inserir na playlist: ");
+            printf("Digite o codigo da musica que deseja inserir na playlist: ");
             if (scanf("%d", &valorInt) != 1) {
                 while (getchar() != '\n');
-                printf("Código inválido.\n");
+                printf("Codigo invalido.\n");
                 return;
             }
             getchar();
@@ -334,7 +334,7 @@ void buscarEInserirMusica(Lista *lista, Fila *fila, Pilha *pilha) {
         }
 
         case 3:
-            printf("Digite o título: ");
+            printf("Digite o titulo: ");
             if (!fgets(valorStr, sizeof(valorStr), stdin)) {
                 printf("Erro na leitura.\n");
                 return;
@@ -344,16 +344,16 @@ void buscarEInserirMusica(Lista *lista, Fila *fila, Pilha *pilha) {
             break;
 
         default:
-            printf("Critério inválido.\n");
+            printf("Criterio invalido.\n");
             return;
     }
 
     if (achou) {
         enqueue(fila, resultado);
         push(pilha, resultado);
-        printf("Música inserida na playlist com sucesso!\n");
+        printf("Musica inserida na playlist com sucesso!\n");
     } else {
-        printf("Música não encontrada.\n");
+        printf("Musica não encontrada.\n");
     }
 }
 
@@ -499,29 +499,29 @@ void salvarRelatorio(const char *nomeRelatorio, Fila *fila, Lista *lista) {
         return;
     }
 
-    fprintf(arq, "RELATÓRIO DA PLAYLIST\n");
+    fprintf(arq, "RELAOÓRIO DA PLAYLIST\n");
     fprintf(arq, "=====================\n\n");
 
     NodoFila *atual = fila->inicio;
     int contadorPlaylist = 0;
 
     while (atual != NULL) {
-        fprintf(arq, "Título: %s\n", atual->musica.titulo);
+        fprintf(arq, "Titulo: %s\n", atual->musica.titulo);
         fprintf(arq, "Artista: %s\n", atual->musica.artista);
-        fprintf(arq, "Código: %d\n", atual->musica.codigo);
+        fprintf(arq, "Codigo: %d\n", atual->musica.codigo);
         fprintf(arq, "Letra: %s\n", atual->musica.letra);
-        fprintf(arq, "Execuções: %d\n", atual->musica.execucoes);
+        fprintf(arq, "Execucoes: %d\n", atual->musica.execucoes);
         fprintf(arq, "---------------------------\n");
         contadorPlaylist++;
         atual = atual->prox;
     }
 
     fprintf(arq, "\nResumo:\n");
-    fprintf(arq, "Total de músicas na playlist: %d\n", contadorPlaylist);
-    fprintf(arq, "Total de músicas no acervo original: %d\n", lista->tamanho);
+    fprintf(arq, "Total de musicas na playlist: %d\n", contadorPlaylist);
+    fprintf(arq, "Total de musicas no acervo original: %d\n", lista->tamanho);
 
     fclose(arq);
-    printf("Relatório salvo com sucesso em '%s'!\n", nomeRelatorio);
+    printf("Relatorio salvo com sucesso em '%s'!\n", nomeRelatorio);
 }
 
 void carregarBackup(const char *nomeRelatorio, Fila *fila, Pilha *pilha) {
@@ -554,7 +554,7 @@ void carregarBackup(const char *nomeRelatorio, Fila *fila, Pilha *pilha) {
     }
 
     fclose(arquivo);
-    printf("Backup carregado com sucesso e músicas inseridas na playlist!\n");
+    printf("Backup carregado com sucesso e musicas inseridas na playlist!\n");
 }
 
 void importacao(Lista *lista, Fila *fila, Pilha *pilha, int *carregouArquivo) {
@@ -562,7 +562,7 @@ void importacao(Lista *lista, Fila *fila, Pilha *pilha, int *carregouArquivo) {
     char nomeArq[100];
 
     printf("Importar:\n");
-    printf("1 - Acervo original de músicas\n");
+    printf("1 - Acervo original de musicas\n");
     printf("2 - Backup da playlist\n");
     printf("Escolha: ");
 
@@ -600,6 +600,23 @@ void importacao(Lista *lista, Fila *fila, Pilha *pilha, int *carregouArquivo) {
     }
 }
 
+void criarPlaylist(Fila *fila, Pilha *pilha) {
+    char confirmacao;
+
+    printf("Ao fazer isso, você irá sobrescrever a playlist anterior.\n");
+    printf("Tem certeza que deseja continuar? (s/n): ");
+    scanf(" %c", &confirmacao);
+
+    if (confirmacao == 's' || confirmacao == 'S') {
+        liberarFila(fila);
+        liberarPilha(pilha);
+        criarFila(fila);
+        criarPilha(pilha);
+        printf("Nova playlist criada com sucesso!\n");
+    } else {
+        printf("Comando cancelado.\n");
+    }
+}
 
 //---------------------------------------- MAIN ----------------------------------------//
 int main() {
@@ -633,11 +650,13 @@ int main() {
                 break;
 
             case 2:
-                liberarFila(&playlistFila);
-                liberarPilha(&playlistPilha);
-                criarFila(&playlistFila);
-                criarPilha(&playlistPilha);
-                printf("Nova playlist criada.\n");
+                if (playlistFila.inicio != NULL) {
+                    criarPlaylist(&playlistFila, &playlistPilha);
+                } else {
+                    criarFila(&playlistFila);
+                    criarPilha(&playlistPilha);
+                    printf("Nova playlist criada.\n");
+                }
                 break;
 
             case 3:
@@ -658,12 +677,12 @@ int main() {
 
             case 5:
                 if (playlistFila.inicio == NULL) {
-                    printf("Crie uma playlist antes de salvar o relatório!\n");
+                    printf("Insira na playlist antes de salvar o relatorio!\n");
                     break;
                 }
 
                 char nomeRela[100];
-                printf("Digite o nome do arquivo para salvar o relatório (ex: relatorio.txt): ");
+                printf("Digite o nome do arquivo para salvar o relatorio (ex: relatorio.txt): ");
                 fgets(nomeRela, sizeof(nomeRela), stdin);
                 nomeRela[strcspn(nomeRela, "\n")] = 0;
 
