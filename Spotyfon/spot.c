@@ -3,11 +3,6 @@
 #include <string.h>
 #include "spotyfon.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-
 void carregarMusicas(const char *nomeArquivo, Lista *lista) {
     FILE *arquivo = fopen(nomeArquivo, "r");
     if (!arquivo) {
