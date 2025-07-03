@@ -1,7 +1,40 @@
+#include "spotyfon.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "spotyfon.h"
+
+//---------------------------------------- LISTA ----------------------------------------//
+void inicializarLista(Lista *lista) {
+    lista->inicio = NULL;
+    lista->tamanho = 0;
+}
+
+void inserirMusicaFim(Lista *lista, Musica m) {
+    Nodo *novo = malloc(sizeof(Nodo));
+    if (!novo) return;
+    novo->musica = m;
+    novo->prox = NULL;
+
+    if (lista->inicio == NULL) {
+        lista->inicio = novo;
+    } else {
+        Nodo *aux = lista->inicio;
+        while (aux->prox != NULL)
+            aux = aux->prox;
+        aux->prox = novo;
+    }
+    lista->tamanho++;
+}
+
+void liberarLista(Lista *lista) {
+    Nodo *aux;
+    while (lista->inicio != NULL) {
+        aux = lista->inicio;
+        lista->inicio = aux->prox;
+        free(aux);
+    }
+    lista->tamanho = 0;
+}
 
 void carregarMusicas(const char *nomeArquivo, Lista *lista) {
     FILE *arquivo = fopen(nomeArquivo, "r");
@@ -49,7 +82,6 @@ void imprimirMusica(const Musica *m) {
 }
 
 //---------------------------------------- PILHA ----------------------------------------//
-
 void criarPilha(Pilha *p) {
     p->topo = NULL;
     p->tamanho = 0;
@@ -87,6 +119,10 @@ int pilhaVazia(Pilha *p) {
 }
 
 //---------------------------------------- FILA ----------------------------------------//
+void criarFila(Fila *f) {
+    f->inicio = f->fim = NULL;
+    f->tamanho = 0;
+}
 
 void enqueue(Fila *f, Musica m) {
     NodoFila *novo = malloc(sizeof(NodoFila));
@@ -106,37 +142,7 @@ void imprimirFila(Fila *f) {
         aux = aux->prox;
     }
 }
-void inicializarLista(Lista *lista) {
-    lista->inicio = NULL;
-    lista->tamanho = 0;
-}
 
-void inserirMusicaFim(Lista *lista, Musica m) {
-    Nodo *novo = malloc(sizeof(Nodo));
-    if (!novo) return;
-    novo->musica = m;
-    novo->prox = NULL;
-
-    if (lista->inicio == NULL) {
-        lista->inicio = novo;
-    } else {
-        Nodo *aux = lista->inicio;
-        while (aux->prox != NULL)
-            aux = aux->prox;
-        aux->prox = novo;
-    }
-    lista->tamanho++;
-}
-
-void liberarLista(Lista *lista) {
-    Nodo *aux;
-    while (lista->inicio != NULL) {
-        aux = lista->inicio;
-        lista->inicio = aux->prox;
-        free(aux);
-    }
-    lista->tamanho = 0;
-}
 void liberarFila(Fila *f) {
     NodoFila *aux;
     while (f->inicio) {
@@ -147,9 +153,11 @@ void liberarFila(Fila *f) {
     f->fim = NULL;
     f->tamanho = 0;
 }
+
 int filaVazia(Fila *f) {
     return f->inicio == NULL;
 }
+
 
 //---------------------------------------- BUSCA ----------------------------------------//
 int buscarMusicaLista(Lista *lista, Musica *resultado, int criterio, const char *valorStr, int valorInt) {
