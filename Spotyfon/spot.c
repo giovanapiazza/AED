@@ -201,8 +201,7 @@ int buscarMusicaLista(Lista *lista, Musica *resultado, int criterio, const char 
         }
         printf("Codigo nao encontrado.\n");
         return 0;
-    } 
-    else {  // Caso código ou título, busca normal
+    } else {  
         while (atual) {
             int encontrou = 0;
             switch (criterio) {
@@ -343,7 +342,7 @@ void salvarBackup(Fila *fila, const char *nomeback) {
 void imprimirTudo(Lista *lista, Fila *fila, Pilha *pilha) {
     int op;
     do {
-        printf("\nMenu de Impressao:\n");
+        printf("\nMenu de busca para impressao:\n");
         printf("0 - Cancelar\n");
         printf("1 - Imprimir Playlist como fila\n");
         printf("2 - Imprimir Playlist como pilha\n");
@@ -500,11 +499,8 @@ void carregarBackup(const char *nomeRelatorio, Fila *fila, Pilha *pilha) {
         Musica m;
         char artista[256], titulo[256], letra[256];
         int codigo, execucoes;
-
-        // Remove \n no final da linha, se existir
         linha[strcspn(linha, "\n")] = 0;
 
-        // Parse da linha com sscanf
         if (sscanf(linha, " %[^;]; %d; %[^;]; %[^;]; %d", artista, &codigo, titulo, letra, &execucoes) == 5) {
             strncpy(m.artista, artista, sizeof(m.artista));
             m.codigo = codigo;
