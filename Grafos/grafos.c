@@ -3,7 +3,44 @@
 #include <string.h>
 #include "grafos.h"
 
-// ---------------- GRAFO ----------------
+//Fila
+Fila *criaFila() {
+    Fila *fila = (Fila *)malloc(sizeof(Fila));
+    fila->inicio = NULL;
+    fila->fim = NULL;
+    fila->tamanho = 0;
+    return fila;
+}
+
+NodoFila *criaNodoFila(Aresta *a) {
+    NodoFila *novo = (NodoFila *)malloc(sizeof(NodoFila));
+    novo->arestaFila = a;
+    novo->prox = NULL;
+    return novo;
+}
+
+void enqueue(Fila *fila, NodoFila *nodo) {
+    if (fila->fim == NULL) {
+        fila->inicio = nodo;
+        fila->fim = nodo;
+    } else {
+        fila->fim->prox = nodo;
+        fila->fim = nodo;
+    }
+    fila->tamanho++;
+}
+
+void showFila(Fila *fila) {
+    NodoFila *atual = fila->inicio;
+    printf("Fila de Arestas\n");
+    while (atual != NULL) {
+        printf("[ %d -> %d (peso %d) ]\n", atual->arestaFila->partida, atual->arestaFila->chegada, atual->arestaFila->peso);
+        atual = atual->prox;
+    }
+    printf("Tamanho da fila: %d\n", fila->tamanho);
+}
+
+//grafo
 Grafo *inicializaGrafo(int tamanho) {
     Grafo *grafo = (Grafo *)malloc(sizeof(Grafo));
     grafo->max_vertices = tamanho;
@@ -97,7 +134,7 @@ Grafo *parser(char *nomeArquivo) {
 }
 
 void imprimeGrafo(Grafo *grafo) {
-    printf("Grafos em lista\n");
+    printf("Grafo em lista\n");
     Nodo *nodo = grafo->nodos;
     while (nodo != NULL) {
         printf("Nodo %d - ", nodo->chave);
@@ -108,42 +145,5 @@ void imprimeGrafo(Grafo *grafo) {
         }
         nodo = nodo->prox;
     }
-}
-
-// ---------------- FILA ----------------
-Fila *criaFila() {
-    Fila *fila = (Fila *)malloc(sizeof(Fila));
-    fila->inicio = NULL;
-    fila->fim = NULL;
-    fila->tamanho = 0;
-    return fila;
-}
-
-NodoFila *criaNodoFila(Aresta *a) {
-    NodoFila *novo = (NodoFila *)malloc(sizeof(NodoFila));
-    novo->arestaFila = a;
-    novo->prox = NULL;
-    return novo;
-}
-
-void enqueue(Fila *fila, NodoFila *nodo) {
-    if (fila->fim == NULL) {
-        fila->inicio = nodo;
-        fila->fim = nodo;
-    } else {
-        fila->fim->prox = nodo;
-        fila->fim = nodo;
-    }
-    fila->tamanho++;
-}
-
-void showFila(Fila *fila) {
-    NodoFila *atual = fila->inicio;
-    printf("Fila de arestas\n");
-    while (atual != NULL) {
-        printf("[ %d -> %d (peso %d) ]\n", atual->arestaFila->partida, atual->arestaFila->chegada, atual->arestaFila->peso);
-        atual = atual->prox;
-    }
-    printf("Tamanho da fila: %d\n", fila->tamanho);
 }
 
