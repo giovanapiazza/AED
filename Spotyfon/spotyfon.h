@@ -1,8 +1,6 @@
 #ifndef SPOTYFON_H
 #define SPOTYFON_H
 
-#include <stdio.h>
-
 typedef struct {
     char artista[256];
     int codigo;
@@ -11,62 +9,64 @@ typedef struct {
     int execucoes;
 } Musica;
 
-// Funções gerais
-int carregarMusicas(const char *nomeArquivo, Musica lista[], int max);
-void imprimirMusica(Musica *m);
+// Lista encadeada
+typedef struct nodo {
+    Musica musica;
+    struct nodo *prox;
+} Nodo;
+
+typedef struct {
+    Nodo *inicio;
+    int tamanho;
+} Lista;
+
+void inicializarLista(Lista *lista);
+void liberarLista(Lista *lista);
+void carregarMusicas(const char *nomeArquivo, Lista *lista);
+void imprimirMusica(const Musica *m);
+int buscarMusicaLista(Lista *lista, Musica *resultado, int criterio, const char *valorStr, int valorInt);
 
 // Pilha
-typedef struct nodoPilha {
-    Musica *musica;
-    struct nodoPilha *prox;
+typedef struct nodo_pilha {
+    Musica musica;
+    struct nodo_pilha *prox;
 } NodoPilha;
 
 typedef struct {
     NodoPilha *topo;
     int tamanho;
-} DescPilha;
+} Pilha;
 
-DescPilha *criaDescPilha(void);
-NodoPilha *criaNodoPilha(Musica *m);
-void inserirPilha(DescPilha *pilha, NodoPilha *novoElemento);
-int existePilha(DescPilha *pilha);
-int tamanhoPilha(DescPilha *pilha);
-void imprimirPilha(DescPilha *pilha);
-void salvarPilhaSimples(DescPilha *pilha, const char *nomeArquivo);
-void exportarPilhaCompleta(DescPilha *pilha, const char *nomeArquivo);
-void freePilha(DescPilha *pilha);
+void criarPilha(Pilha *p);
+void push(Pilha *p, Musica m);
+void imprimirPilha(Pilha *p);
+void liberarPilha(Pilha *p);
+int pilhaVazia(Pilha *p);
 
 // Fila
-typedef struct nodoFila {
-    Musica *musica;
-    struct nodoFila *prox;
+typedef struct nodo_fila {
+    Musica musica;
+    struct nodo_fila *prox;
 } NodoFila;
 
 typedef struct {
-    NodoFila *inicio;
-    NodoFila *fim;
+    NodoFila *inicio, *fim;
     int tamanho;
-} DescFila;
+} Fila;
 
-DescFila *createFila(void);
-void inserirFila(DescFila *fila, Musica *m);
-int existeFila(DescFila *fila);
-int tamanhoFila(DescFila *fila);
-void imprimirFila(DescFila *fila);
-void salvarFilaSimples(DescFila *fila, const char *nomeArquivo);
-void exportarFilaCompleta(DescFila *fila, const char *nomeArquivo);
-void freeFila(DescFila *fila);
+void criarFila(Fila *f);
+void enqueue(Fila *f, Musica m);
+void imprimirFila(Fila *f);
+void liberarFila(Fila *f);
+int filaVazia(Fila *f);
 
-// Busca
-int buscarMusicaArquivo(const char *nomeArquivo, Musica *resultado, int criterio, const char *valorStr, int valorInt);
-int buscarMusicaPlaylistPorCodigo(DescFila *fila, int codigo, Musica *resultado);
-int buscarMusicaPlaylistPorArtista(DescFila *fila, const char *artista, Musica *resultado);
-int buscarMusicaPlaylistPorTitulo(DescFila *fila, const char *titulo, Musica *resultado);
-void buscarMusica(const char *nomeArquivo, Musica *resultado, DescFila *fila, DescPilha *pilha);
-void buscarEInserirMusica(const char *nomeArquivo, DescFila *fila, DescPilha *pilha);
-
-// Salvar e exportar playlist
-void salvarPlaylistSimples(DescFila *fila, DescPilha *pilha, const char *nomeArquivoFila, const char *nomeArquivoPilha);
-void exportarPlaylistCompleta(DescFila *fila, DescPilha *pilha);
+// Operacoes principais
+void buscarEInserirMusica(Lista *lista, Fila *fila, Pilha *pilha);
+void salvarBackup(Fila *fila, const char *nomeback);
+void imprimirTudo(Lista *lista, Fila *fila, Pilha *pilha);
+void salvarRelatorio(const char *nomeRelatorio, Fila *fila, Lista *lista);
+void carregarBackup(const char *nomeRelatorio, Fila *fila, Pilha *pilha);
+void importacao(Lista *lista, Fila *fila, Pilha *pilha, int *carregouArquivo);
+void criarPlaylist(Fila *fila, Pilha *pilha);
 
 #endif
