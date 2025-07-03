@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "grafos.h"
-
 int main() {
     int opcao, chave_busca;
     Grafo *grafo = NULL;
@@ -16,7 +15,7 @@ int main() {
         printf("3 - Imprimir grafo\n");
         printf("4 - Enfileirar arestas\n");
         printf("0 - Sair\n");
-        printf("\nEscolha sua opcao:");
+        printf("\nEscolha sua opcao:\n");
         scanf("%d", &opcao);
         setbuf(stdin, NULL);
 
@@ -82,3 +81,4 @@ int main() {
 
     return 0;
 }
+
