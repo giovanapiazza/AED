@@ -4,105 +4,107 @@
 #include "spotyfon.h"
 
 int main() {
-    struct desc_fila *minhaFila = Createfila();
-    struct desc_pilha *minhaPilha = criaDescPilha();
-    char nomeArquivo[100];
-    char confirma;
-    int opcao;
-    
+    Lista listaMusicas;
+    Fila playlistFila;
+    Pilha playlistPilha;
+    char nomeArquivo[256];
+    int carregouArquivo = 0;
+    int opcao, op;
+
+    inicializarLista(&listaMusicas);
+    criarFila(&playlistFila);
+    criarPilha(&playlistPilha);
+
     do {
         printf("\nMenu:\n");
-        printf("1- Carregar arquivo de músicas\n");
+        printf("1- Carregar arquivo de musicas\n");
         printf("2- Criar nova playlist\n");
-        printf("3- Inserir música na playlist\n");
-        printf("4- Imprimir uma música\n");
-        printf("5- Imprimir relatório\n");
-        printf("6- Imprimir playlist (Back-up)\n");
-        printf("0- Sair\n");
-        printf("Escolha: ");
-        scanf("%d", &opcao);
+        printf("3- Inserir musica na playlist\n");
+        printf("4- Imprimir\n");
+        printf("5- Relatorio\n");
+        printf("6- Backup playlist\n");
+        printf("0- Sair\nEscolha: ");
+
+        if (scanf("%d", &opcao) != 1) { while(getchar() != '\n'); continue; }
         getchar();
 
         switch (opcao) {
             case 1:
-                printf("Digite o nome do arquivo: ");
-                if (fgets(nomeArquivo, sizeof(nomeArquivo), stdin)) {
-                    nomeArquivo[strcspn(nomeArquivo, "\n")] = '\0'; 
-                }
-                carregar(nomeArquivo, minhaFila);
+                importacao(&listaMusicas, &playlistFila, &playlistPilha, &carregouArquivo);
                 break;
 
-            case 2:                 
-                // Verifica se já existe conteúdo na playlist
-                if (minhaPilha->tamanho > 0 || minhaFila->tamanho > 0) {
-                    printf("Ao fazer isso você irá sobrescrever uma playlist anterior.\nTem certeza disso? (s/n): ");
-                    scanf(" %c", &confirma);
-                    getchar(); 
-                
-                    if (confirma == 's' || confirma == 'S') {
-                        // Libera memória da playlist anterior
-                        freeFila(minhaFila);
-                        freePilha(minhaPilha);
-                
-                        // Cria nova fila e pilha
-                        minhaFila = Createfila();
-                       minhaPilha = criaDescPilha();
-                        printf("Nova playlist criada com sucesso!\n");
-                    } else if (confirma == 'n' || confirma == 'N') {
-                        printf("Operação cancelada.\n");
-                    } else {
-                        printf("Opção inválida.\n");
-                    }
+            case 2:
+                if (playlistFila.inicio != NULL) {
+                    criarPlaylist(&playlistFila, &playlistPilha);
                 } else {
-                    // Se a playlist ainda não existe, apenas cria
-                    minhaFila = Createfila();
-                   minhaPilha = criaDescPilha();
-                    printf("Playlist criada com sucesso!\n");
+                    criarFila(&playlistFila);
+                    criarPilha(&playlistPilha);
+                    printf("Nova playlist criada.\n");
                 }
-
                 break;
 
             case 3:
-                if (minhaPilha->tamanho == 0 && minhaFila->tamanho == 0) {
-                    printf("Crie uma playlist antes.\n");
-                } else {
-                    buscarEInserirMusica("musicas.txt", minhaFila, minhaPilha);
+                if (!carregouArquivo) {
+                    printf("Carregue o arquivo antes.\n");
+                    break;
                 }
+                buscarEInserirMusica(&listaMusicas, &playlistFila, &playlistPilha);
                 break;
 
-            case 4:
-                Musica resultado;
-                buscarMusica("musicas.txt", &resultado, minhaFila, minhaPilha);
+            case 4: 
+                if (!carregouArquivo) {
+                    printf("Carregue o arquivo antes.\n");
+                    break;
+                }
+                imprimirTudo(&listaMusicas, &playlistFila, &playlistPilha);
                 break;
 
             case 5:
-                if (minhaPilha->tamanho == 0 && minhaFila->tamanho == 0) {
-                    printf("Crie uma playlist antes.\n");
-                } else {
-                     salvarPlaylistCompleta(minhaFila, minhaPilha, "playlist_fila.txt", "playlist_pilha.txt");
+                if (playlistFila.inicio == NULL) {
+                    printf("Insira na playlist antes de salvar o relatorio!\n");
+                    break;
                 }
+
+                char nomeRela[100];
+                printf("Digite o nome do arquivo para salvar o relatorio (ex: relatorio.txt): ");
+                fgets(nomeRela, sizeof(nomeRela), stdin);
+                nomeRela[strcspn(nomeRela, "\n")] = 0;
+
+                salvarRelatorio(nomeRela, &playlistFila, &listaMusicas);
                 break;
 
             case 6:
-                if (minhaPilha->tamanho == 0 && minhaFila->tamanho == 0) {
-                    printf("Crie uma playlist antes.\n");
+                if (!carregouArquivo) {
+                    printf("Voce deve carregar um arquivo primeiro.\n");
+                    break;
+                }
+                if (playlistFila.inicio == NULL && playlistFila.fim == NULL && playlistFila.tamanho == 0) {
+                    printf("A playlist ainda nao foi criada.\n");
+                    break;
+                }
+
+                if (filaVazia(&playlistFila)) {
+                    printf("A playlist esta vazia. Nada a salvar.\n");
                 } else {
-                    exportarPlaylistCompleta(minhaFila, minhaPilha);
- 
+                    char nomeback[256];
+                    printf("Digite o nome do arquivo para backup (ex: backup.txt): ");
+                    fgets(nomeback, sizeof(nomeback), stdin);
+                    nomeback[strcspn(nomeback, "\n")] = 0;
+                    salvarBackup(&playlistFila, nomeback);
                 }
                 break;
-
             case 0:
-                printf("Encerrando...\n");
+                printf("Saindo...\n");
                 break;
 
             default:
-                printf("Opção inválida.\n");
+                printf("Opcao invalida.\n");
         }
-
     } while (opcao != 0);
 
-    freePilha(minhaPilha);
-    freeFila(minhaFila);
+    liberarLista(&listaMusicas);
+    liberarFila(&playlistFila);
+    liberarPilha(&playlistPilha);
+
     return 0;
 }
