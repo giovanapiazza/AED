@@ -1,4 +1,4 @@
-#include "spotyfon.h"
+#include "spot.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -155,6 +155,7 @@ void liberarFila(Fila *f) {
 }
 int filaVazia(Fila *f) {
     return f->inicio == NULL;
+}
 
 
 //---------------------------------------- BUSCA ----------------------------------------//
@@ -649,7 +650,8 @@ void backup(const char *nomeArquivo, Lista *lista, Fila *fila, int carregouArqui
             default:
                 printf("Opcao invalida.\n");
                 break;
-        }
-
+    
+        }   
     } while (esc != 0);
+
 }
