@@ -349,6 +349,7 @@ void buscarEInserirMusica(Lista *lista, Fila *fila, Pilha *pilha) {
     }
 
     if (achou) {
+        resultado.execucoes = 0;  // zera execuções antes de inserir
         enqueue(fila, resultado);
         push(pilha, resultado);
         printf("Musica inserida na playlist com sucesso!\n");
@@ -357,10 +358,34 @@ void buscarEInserirMusica(Lista *lista, Fila *fila, Pilha *pilha) {
     }
 }
 
+void executarPlaylist(Fila *fila, Pilha *pilha) {
+    if (filaVazia(fila)) {
+        printf("A playlist esta vazia. Nada para executar.\n");
+        return;
+    }
+
+    // Incrementa execucoes na fila e imprime as musicas
+    NodoFila *auxFila = fila->inicio;
+    printf("\n--- Executando Playlist ---\n");
+    while (auxFila) {
+        auxFila->musica.execucoes++;
+        imprimirMusica(&auxFila->musica);
+        auxFila = auxFila->prox;
+    }
+
+    // Atualiza execucoes na pilha para manter sincronizado
+    NodoPilha *auxPilha = pilha->topo;
+    while (auxPilha) {
+        auxPilha->musica.execucoes++;
+        auxPilha = auxPilha->prox;
+    }
+
+    printf("--- Playlist executada com sucesso! ---\n");
+}
 
 
-void salvarBackup(Fila *fila, const char *nomeback) {
-    FILE *arquivo = fopen(nomeback, "w");
+void salvarPlaylist(Fila *fila, const char *nomeplay) {
+    FILE *arquivo = fopen(nomeplay, "w");
     if (arquivo == NULL) {
         printf("Erro ao abrir o arquivo para salvar o backup!\n");
         return;
@@ -373,7 +398,7 @@ void salvarBackup(Fila *fila, const char *nomeback) {
     }
 
     fclose(arquivo);
-    printf("Backup da playlist salvo com sucesso no arquivo '%s'.\n", nomeback);
+    printf("Backup da playlist salvo com sucesso no arquivo '%s'.\n", nomeplay);
 }
 
 void imprimirTudo(Lista *lista, Fila *fila, Pilha *pilha) {
@@ -492,10 +517,10 @@ void imprimirTudo(Lista *lista, Fila *fila, Pilha *pilha) {
     } while (op != 0);
 }
 
-void salvarRelatorio(const char *nomeRelatorio, Fila *fila, Lista *lista) {
-    FILE *arq = fopen(nomeRelatorio, "w");
+void salvarBackup(const char *nomebacktorio, Fila *fila, Lista *lista) {
+    FILE *arq = fopen(nomebacktorio, "w");
     if (arq == NULL) {
-        printf("Erro ao criar o arquivo '%s'.\n", nomeRelatorio);
+        printf("Erro ao criar o arquivo '%s'.\n", nomebacktorio);
         return;
     }
 
@@ -521,11 +546,11 @@ void salvarRelatorio(const char *nomeRelatorio, Fila *fila, Lista *lista) {
     fprintf(arq, "Total de musicas no acervo original: %d\n", lista->tamanho);
 
     fclose(arq);
-    printf("Relatorio salvo com sucesso em '%s'!\n", nomeRelatorio);
+    printf("Relatorio salvo com sucesso em '%s'!\n", nomebacktorio);
 }
 
-void carregarBackup(const char *nomeRelatorio, Fila *fila, Pilha *pilha) {
-    FILE *arquivo = fopen(nomeRelatorio, "r");
+void carregarBackup(const char *nomebacktorio, Fila *fila, Pilha *pilha) {
+    FILE *arquivo = fopen(nomebacktorio, "r");
     if (arquivo == NULL) {
         printf("Erro ao abrir o arquivo de backup.\n");
         return;
@@ -618,6 +643,39 @@ void criarPlaylist(Fila *fila, Pilha *pilha) {
     }
 }
 
+void salvarRelatorio(const char *nomeRelatorio, Fila *fila, Lista *lista, const char *nomeArquivoAcervo) {
+    FILE *arq = fopen(nomeRelatorio, "w");
+    if (arq == NULL) {
+        printf("Erro ao criar o arquivo '%s'.\n", nomeRelatorio);
+        return;
+    }
+
+    fprintf(arq, "RELATORIO DA PLAYLIST\n");
+    fprintf(arq, "Arquivo de Acervo: %s\n", nomeArquivoAcervo);
+    fprintf(arq, "=====================\n\n");
+
+    NodoFila *atual = fila->inicio;
+    int contadorPlaylist = 0;
+
+    while (atual != NULL) {
+        fprintf(arq, "Titulo: %s\n", atual->musica.titulo);
+        fprintf(arq, "Artista: %s\n", atual->musica.artista);
+        fprintf(arq, "Codigo: %d\n", atual->musica.codigo);
+        fprintf(arq, "Letra: %s\n", atual->musica.letra);
+        fprintf(arq, "Execucoes: %d\n", atual->musica.execucoes);
+        fprintf(arq, "---------------------------\n");
+        contadorPlaylist++;
+        atual = atual->prox;
+    }
+
+    fprintf(arq, "\nResumo:\n");
+    fprintf(arq, "Total de musicas na playlist: %d\n", contadorPlaylist);
+    fprintf(arq, "Total de musicas no acervo original: %d\n", lista->tamanho);
+
+    fclose(arq);
+    printf("Relatorio salvo com sucesso em '%s'!\n", nomeRelatorio);
+}
+
 //---------------------------------------- MAIN ----------------------------------------//
 int main() {
     Lista listaMusicas;
@@ -637,8 +695,10 @@ int main() {
         printf("2- Criar nova playlist\n");
         printf("3- Inserir musica na playlist\n");
         printf("4- Imprimir\n");
-        printf("5- Relatorio\n");
+        printf("5- Backup geral\n");
         printf("6- Backup playlist\n");
+        printf("7- Relatório\n");
+        printf("8- Executar\n");
         printf("0- Sair\nEscolha: ");
 
         if (scanf("%d", &opcao) != 1) { while(getchar() != '\n'); continue; }
@@ -677,16 +737,16 @@ int main() {
 
             case 5:
                 if (playlistFila.inicio == NULL) {
-                    printf("Insira na playlist antes de salvar o relatorio!\n");
+                    printf("Insira na playlist antes de salvar um backup!\n");
                     break;
                 }
 
-                char nomeRela[100];
+                char nomeback[100];
                 printf("Digite o nome do arquivo para salvar o relatorio (ex: relatorio.txt): ");
-                fgets(nomeRela, sizeof(nomeRela), stdin);
-                nomeRela[strcspn(nomeRela, "\n")] = 0;
+                fgets(nomeback, sizeof(nomeback), stdin);
+                nomeback[strcspn(nomeback, "\n")] = 0;
 
-                salvarRelatorio(nomeRela, &playlistFila, &listaMusicas);
+                salvarBackup(nomeback, &playlistFila, &listaMusicas);
                 break;
 
             case 6:
@@ -702,13 +762,33 @@ int main() {
                 if (filaVazia(&playlistFila)) {
                     printf("A playlist esta vazia. Nada a salvar.\n");
                 } else {
-                    char nomeback[256];
+                    char nomeplay[256];
                     printf("Digite o nome do arquivo para backup (ex: backup.txt): ");
-                    fgets(nomeback, sizeof(nomeback), stdin);
-                    nomeback[strcspn(nomeback, "\n")] = 0;
-                    salvarBackup(&playlistFila, nomeback);
+                    fgets(nomeplay, sizeof(nomeplay), stdin);
+                    nomeplay[strcspn(nomeplay, "\n")] = 0;
+                    salvarPlaylist(&playlistFila, nomeplay);
                 }
                 break;
+            case 7:
+                if (playlistFila.inicio == NULL) {
+                    printf("Insira na playlist antes de salvar o relatorio!\n");
+                    break;
+                }
+                char nomeRelatorio[100];
+                printf("Digite o nome do arquivo para salvar o relatorio (ex: relatorio.txt): ");
+                fgets(nomeRelatorio, sizeof(nomeRelatorio), stdin);
+                nomeRelatorio[strcspn(nomeRelatorio, "\n")] = 0;
+
+                salvarRelatorio(nomeRelatorio, &playlistFila, &listaMusicas);
+            break;
+            case 8:
+                if (filaVazia(&playlistFila)) {
+                    printf("Playlist vazia. Insira musicas antes de executar.\n");
+                } else {
+                    executarPlaylist(&playlistFila, &playlistPilha);
+                }
+                break;
+
             case 0:
                 printf("Saindo...\n");
                 break;
