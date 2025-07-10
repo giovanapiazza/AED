@@ -3,44 +3,47 @@
 #include <string.h>
 #include "grafos.h"
 
-//Fila
-Fila *criaFila() {
-    Fila *fila = (Fila *)malloc(sizeof(Fila));
-    fila->inicio = NULL;
-    fila->fim = NULL;
-    fila->tamanho = 0;
-    return fila;
+Pilha *criaPilha() {
+    Pilha *pilha = (Pilha *)malloc(sizeof(Pilha));
+    pilha->topo = NULL;
+    pilha->tamanho = 0;
+    return pilha;
 }
 
-NodoFila *criaNodoFila(Aresta *a) {
-    NodoFila *novo = (NodoFila *)malloc(sizeof(NodoFila));
-    novo->arestaFila = a;
+NodoPilha *criaNodoPilha(Aresta *a) {
+    if (a == NULL) return NULL;
+    NodoPilha *novo = (NodoPilha *)malloc(sizeof(NodoPilha));
+    novo->arestaPilha = a;
     novo->prox = NULL;
     return novo;
 }
 
-void enqueue(Fila *fila, NodoFila *nodo) {
-    if (fila->fim == NULL) {
-        fila->inicio = nodo;
-        fila->fim = nodo;
-    } else {
-        fila->fim->prox = nodo;
-        fila->fim = nodo;
-    }
-    fila->tamanho++;
+void push(Pilha *pilha, NodoPilha *nodo) {
+    if (nodo == NULL) return;
+    nodo->prox = pilha->topo;
+    pilha->topo = nodo;
+    pilha->tamanho++;
 }
 
-void showFila(Fila *fila) {
-    NodoFila *atual = fila->inicio;
-    printf("Fila de Arestas\n");
+NodoPilha *pop(Pilha *pilha) {
+    if (pilha->topo == NULL) return NULL;
+    NodoPilha *removido = pilha->topo;
+    pilha->topo = pilha->topo->prox;
+    pilha->tamanho--;
+    return removido;
+}
+
+void showPilha(Pilha *pilha) {
+    NodoPilha *atual = pilha->topo;
+    printf("Pilha de Arestas\n");
     while (atual != NULL) {
-        printf("[ %d -> %d (peso %d) ]\n", atual->arestaFila->partida, atual->arestaFila->chegada, atual->arestaFila->peso);
+        printf("\n[ %d -> %d (peso %d) ]\n", atual->arestaPilha->partida, atual->arestaPilha->chegada, atual->arestaPilha->peso);
         atual = atual->prox;
     }
-    printf("Tamanho da fila: %d\n", fila->tamanho);
+    printf("Tamanho da pilha: %d\n", pilha->tamanho);
 }
 
-//grafo
+// Grafo
 Grafo *inicializaGrafo(int tamanho) {
     Grafo *grafo = (Grafo *)malloc(sizeof(Grafo));
     grafo->max_vertices = tamanho;
@@ -128,14 +131,24 @@ Grafo *parser(char *nomeArquivo) {
             n = 0;
         }
     }
+    if (n > 0) {
+        linha[n] = '\0';
+        int partida = atoi(strtok(linha, " "));
+        int chegada = atoi(strtok(NULL, " "));
+        int peso = atoi(strtok(NULL, " "));
+        grafo = insereAresta(grafo, partida, chegada, peso);
+    }
 
     fclose(file);
     return grafo;
 }
 
-void imprimeGrafo(Grafo *grafo) {
-    printf("Grafo em lista\n");
-    Nodo *nodo = grafo->nodos;
+void imprimeGrafoDe(Nodo *inicio) {
+    if (inicio == NULL) {
+        printf("Vértice não encontrado.\n");
+        return;
+    }
+    Nodo *nodo = inicio;
     while (nodo != NULL) {
         printf("Nodo %d - ", nodo->chave);
         Aresta *adj = nodo->adjacencias;
@@ -143,7 +156,7 @@ void imprimeGrafo(Grafo *grafo) {
             printf("[ ->%d (peso %d) ] ", adj->chegada, adj->peso);
             adj = adj->prox;
         }
+        printf("\n");
         nodo = nodo->prox;
     }
 }
-
