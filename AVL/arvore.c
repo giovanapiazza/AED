@@ -17,7 +17,6 @@ descritorAvl *Cria() {
     return avl;
 }
 
-// Rotação simples para a direita
 Arv *rotacaoDireita(Arv *y) {
     Arv *x = y->esq;
     Arv *T2 = x->dir;
@@ -47,13 +46,12 @@ Arv *rotacaoEsquerda(Arv *x) {
     return y; 
 }
 
-// Calcula o fator de balanceamento do nó
 int fatorBalanceamento(Arv *no) {
     if (no == NULL) return 0;
     return altura(no->esq) - altura(no->dir);
 }
 
-// Insere  e balanceamento
+// Insere  e balance
 Arv *Insere(Arv *no, int valor) {
 
     if (no == NULL) {
