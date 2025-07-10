@@ -1,41 +1,45 @@
 #ifndef GRAFOS_H
 #define GRAFOS_H
-typedef struct aresta {
-    int partida, chegada, peso;
-    struct aresta *prox;
+
+typedef struct Aresta {
+    int partida;
+    int chegada;
+    int peso;
+    struct Aresta *prox;
 } Aresta;
 
-typedef struct nodo {
+typedef struct Nodo {
     int chave;
     Aresta *adjacencias;
-    struct nodo *prox;
+    struct Nodo *prox;
 } Nodo;
 
-typedef struct {
+typedef struct Grafo {
     int max_vertices;
     int max_arestas;
     Nodo *nodos;
 } Grafo;
 
-typedef struct nodo_fila {
-    Aresta *arestaFila;
-    struct nodo_fila *prox;
-} NodoFila;
+typedef struct NodoPilha {
+    Aresta *arestaPilha;
+    struct NodoPilha *prox;
+} NodoPilha;
 
 typedef struct {
-    NodoFila *inicio;
-    NodoFila *fim;
+    NodoPilha *topo;
     int tamanho;
-} Fila;
+} Pilha;
 
 Grafo *inicializaGrafo(int tamanho);
-Grafo *parser(char *nomeArquivo);
 Grafo *insereAresta(Grafo *grafo, int saida, int chegada, int peso);
 Nodo *buscaVertice(Grafo *grafo, int chave);
-void imprimeGrafo(Grafo *grafo);
-Fila *criaFila();
-NodoFila *criaNodoFila(Aresta *a);
-void enqueue(Fila *fila, NodoFila *nodo);
-void showFila(Fila *fila);
+Grafo *parser(char *nomeArquivo);
+void imprimeGrafoDe(Nodo *inicio);
+
+Pilha *criaPilha();
+NodoPilha *criaNodoPilha(Aresta *a);
+void push(Pilha *pilha, NodoPilha *nodo);
+NodoPilha *pop(Pilha *pilha);
+void showPilha(Pilha *pilha);
 
 #endif
