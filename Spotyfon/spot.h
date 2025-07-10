@@ -21,10 +21,10 @@ typedef struct {
 } Lista;
 
 void inicializarLista(Lista *lista);
+void inserirMusicaFim(Lista *lista, Musica m);
 void liberarLista(Lista *lista);
 void carregarMusicas(const char *nomeArquivo, Lista *lista);
 void imprimirMusica(const Musica *m);
-int buscarMusicaLista(Lista *lista, Musica *resultado, int criterio, const char *valorStr, int valorInt);
 
 // Pilha
 typedef struct nodo_pilha {
@@ -41,7 +41,7 @@ void criarPilha(Pilha *p);
 void push(Pilha *p, Musica m);
 void imprimirPilha(Pilha *p);
 void liberarPilha(Pilha *p);
-int pilhaVazia(Pilha *p);
+int pilhaVazia(Pilha *p)
 
 // Fila
 typedef struct nodo_fila {
@@ -61,12 +61,17 @@ void liberarFila(Fila *f);
 int filaVazia(Fila *f);
 
 // Operacoes principais
+int buscarMusicaLista(Lista *lista, Musica *resultado, int criterio, const char *valorStr, int valorInt);
 void buscarEInserirMusica(Lista *lista, Fila *fila, Pilha *pilha);
-void salvarBackup(Fila *fila, const char *nomeback);
+void executarPlaylist(Fila *fila, Pilha *pilha);
+void salvarPlaylist(Fila *fila, const char *nomeplay);
 void imprimirTudo(Lista *lista, Fila *fila, Pilha *pilha);
-void salvarRelatorio(const char *nomeRelatorio, Fila *fila, Lista *lista);
-void carregarBackup(const char *nomeRelatorio, Fila *fila, Pilha *pilha);
-void importacao(Lista *lista, Fila *fila, Pilha *pilha, int *carregouArquivo);
+void salvarBackup(const char *nomeArquivo, Lista *lista);
+void carregarBackup(const char *nomebacktorio, Fila *fila, Pilha *pilha);
+void importacao(Lista *lista, Fila *fila, Pilha *pilha, int *carregouArquivo, char *nomeArquivo);
 void criarPlaylist(Fila *fila, Pilha *pilha);
+void salvarRelatorio(const char *nomeRelatorio, Fila *fila, Lista *lista, const char *nomeArquivoAcervo);
+void backup(const char *nomeArquivo, Lista *lista, Fila *fila, int carregouArquivo);
+
 
 #endif
