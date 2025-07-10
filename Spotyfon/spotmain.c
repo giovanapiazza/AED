@@ -3,7 +3,7 @@
 #include <string.h>
 #include "spot.h"
 
-nt main() {
+int main() {
     Lista listaMusicas;
     Fila playlistFila;
     Pilha playlistPilha;
