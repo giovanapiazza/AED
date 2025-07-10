@@ -14,7 +14,7 @@ int main() {
         printf("4- Vizualizar arvore de forma inorder\n");
         printf("5- Visualizar arvore de forma preorder\n");
         printf("6- Finalizar programa\n");
-        printf("Escolha uma opção: ");
+        printf("Escolha uma opcao: ");
         scanf("%d", &op);
         getchar();
 
@@ -22,10 +22,10 @@ int main() {
         case 1:
             if (controle == 0) {
                 avl = Cria();
-                printf("Árvore criada com sucesso!\n");
+                printf("Arvore criada com sucesso!\n");
                 controle = 1;
             } else {
-                printf("Já existe uma árvore criada!\n");
+                printf("Ja existe uma árvore criada!\n");
             }
             break;
 
@@ -34,9 +34,9 @@ int main() {
                 printf("Digite o valor a ser removido: ");
                 scanf("%d", &valor);
                 avl->raiz = Remove(avl->raiz, valor);
-                printf("Remoção concluída.\n");
+                printf("Remocao concluida.\n");
             } else {
-                printf("Crie a árvore e insira elementos primeiro!\n");
+                printf("Crie a arvore e insira elementos primeiro!\n");
             }
             break;
 
@@ -44,11 +44,10 @@ int main() {
             if (controle != 0) {
                 printf("Digite um valor para inserir: ");
                 scanf("%d", &valor);
-                Insere(&(avl->raiz), valor);
-                avl->raiz = Balanceamento(avl->raiz);
+                avl->raiz = Insere(avl->raiz, valor);
                 printf("Valor inserido com sucesso!\n");
             } else {
-                printf("Crie uma árvore primeiro!\n");
+                printf("Crie uma arvore primeiro!\n");
             }
             break;
 
@@ -58,7 +57,7 @@ int main() {
                 Imprime_inorder(avl->raiz);
                 printf("\n");
             } else {
-                printf("Crie a árvore e insira elementos primeiro!\n");
+                printf("Crie a arvore e insira elementos primeiro!\n");
             }
             break;
 
@@ -68,7 +67,7 @@ int main() {
                 Imprime_preorder(avl->raiz);
                 printf("\n");
             } else {
-                printf("Crie a árvore e insira elementos primeiro!\n");
+                printf("Crie a arvore e insira elementos primeiro!\n");
             }
             break;
 
@@ -77,7 +76,7 @@ int main() {
             break;
 
         default:
-            printf("Opção inválida! Tente novamente.\n");
+            printf("Opcao invalida! Tente novamente.\n");
             break;
         }
 
@@ -85,4 +84,3 @@ int main() {
 
     return 0;
 }
-
