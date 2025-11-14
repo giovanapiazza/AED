@@ -1,2 +1,2 @@
-# EAD
-Códigos para aula de EAD 2025/1
+# Algoritmos e estrutura de dados 
+Códigos para aula de Algoritmos e estrutura de dados 2025/1
